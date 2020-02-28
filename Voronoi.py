@@ -4,8 +4,9 @@ import scipy.spatial as sp
 from scipy.spatial import Delaunay
 import sys
 from numpy.linalg import det
+import numpy
 import numpy.matrixlib as np
-
+import auxiliar
 
 #############################################COMINENZO PROGRAMA####################################################
 
@@ -17,18 +18,45 @@ for T in D.simplices:#T es cada triangulo, que esta dado como tres indices de D.
     break
 
 
-
 print(D.simplices)
+print(D.neighbors)
+print(D.convex_hull)
 
 
 
 
 p2=[[random.random(),random.random()]for i in range(6)]
-D.add_points(p2)
+#D.add_points(p2)
 
 
 
-print(D.simplices)
+#print(D.neighbors)
+#print(D.simplices)
+
+
+#Recibe la triangulación ya hecha, me interesa mas que sea asi ya que la triangulacion tiene la opcion incremental
+def Voronoi(D):
+    def infinityPoint(e,D):
+        A=D.points[e[0]]#Coordenada del primer punto de la arista
+        B=D.points[e[1]]
+        U=numpy.array(B)-numpy.array(A)
+        V=numpy.array([-U[1],U[0]])
+        F=[0,0]###TODO: ENCONTRAR PUNTO F DE MANERA OPTIMA
+        cir=auxiliar.circumcenter(e[0],e[1],F)
+        m=numpy.array(cir)
+        return list(m+1000000*V)
+    V=[]
+    N=len(D.points)#Numero de puntos
+    #Para cada punto saber su region
+    for v in range(N) :
+        L=[A for A in D.simplices if v in A]#Todos los simplices en los que esta el vertice
+        I=[E for E in D.convex_hull if v in E]#Aristas a las que pertenece el punto y que estan en el cierre convexo
+
+        #Region del punto dada por los vertices que forman la region
+        R=[auxiliar.circumcenter(D.points(L[0]),D.points(L[1]),D.points(L[2]))]+[infinityPoint(e,D)for e in I]
+        V.append(R)
+    return V
+
 ###########TODO: Traducir esa funcion a codigo python
 # def Voronoi(p):
 #     D=Delaunay(p)
@@ -37,7 +65,7 @@ print(D.simplices)
 #         A=originCoords(e,D)
 #         B=originCoords(twin(e,D),D)
 #         u=vector(B)-vector(A)    #Vector de dirección de la arista de delaunay
-#         v=vector([-u[-1],u[0]])  #Vector perpendicular a la arista de delaunay
+#         v=vector([-u[1],u[0]])  #Vector perpendicular a la arista de delaunay
 #         F=originCoords(prev(twin(e,D),D),D)
 #         m=vector(circumcenter(A,B,F)) # Da el vertice de la region de Voronoi
 #         return list(m+1000000*v) # Direccion de la arista hacia el infinito, vertice y direccion del vector perpendicular
