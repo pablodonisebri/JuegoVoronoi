@@ -40,30 +40,25 @@ def Voronoi(D):
         B=D.points[e[1]]#Coordenada del segundo punto de la arista
 
         U=numpy.array(B)-numpy.array(A)
-        print("U es:"+str(U))
+
         V=numpy.array([-U[1],U[0]])
         [S]=[s for s  in D.simplices if e[0] in s and e[1] in s]
-        print("S es :"+str(S))
+
         cir=auxiliar.circumcenter(D.points[S[0]],D.points[S[1]],D.points[S[2]])
         m=numpy.array(cir)
         return (m+1000000*V).tolist()
     V=[]
     N=len(D.points)#Numero de puntos
     #Para cada punto saber su region
-    print("Checkpoint1")
+
     for v in range(N) :
         L=[A for A in D.simplices if v in A]#Todos los simplices en los que esta el vertice
-        print("Checkpoint2"+str(v))
-        print("L"+str(v)+"es:"+str(L))
         I=[E for E in D.convex_hull if v in E]#Aristas a las que pertenece el punto y que estan en el cierre convexo
-        print("Checkpoint3"+str(v))
-        print("I"+str(v)+"es:"+str(I))
         #Region del punto dada por los vertices que forman la region
         #Formada por:
         #  1.Circuncentros de los simplices en los que esta el punto
         #  2.Puntos del infinito de las regiones no acotadas(si el punto pertenece al cierre convexo de la triangulacion)
-        print("L0[0] es :" + str(L[0]))
-        R=[auxiliar.circumcenter(D.points(l[0]),D.points(l[1]),D.points(l[2])) for l in L].extend([infinityPoint(e,D)for e in I])
+        R=[auxiliar.circumcenter(D.points[l[0]],D.points[l[1]],D.points[l[2]]) for l in L]+[infinityPoint(e,D)for e in I]
         V.append(R)
     return V
 
