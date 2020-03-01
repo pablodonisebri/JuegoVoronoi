@@ -16,11 +16,10 @@ D=Delaunay(p,incremental=True)
 
 for T in D.simplices:#T es cada triangulo, que esta dado como tres indices de D.points() de los vertices que lo forman
     break
-
-
+print("los puntos son:")
+print(p)
+print ("los simplices son")
 print(D.simplices)
-print(D.neighbors)
-print(D.convex_hull)
 
 
 
@@ -38,24 +37,39 @@ p2=[[random.random(),random.random()]for i in range(6)]
 def Voronoi(D):
     def infinityPoint(e,D):
         A=D.points[e[0]]#Coordenada del primer punto de la arista
-        B=D.points[e[1]]
+        B=D.points[e[1]]#Coordenada del segundo punto de la arista
+
         U=numpy.array(B)-numpy.array(A)
+        print("U es:"+str(U))
         V=numpy.array([-U[1],U[0]])
-        F=[0,0]###TODO: ENCONTRAR PUNTO F DE MANERA OPTIMA
-        cir=auxiliar.circumcenter(e[0],e[1],F)
+        [S]=[s for s  in D.simplices if e[0] in s and e[1] in s]
+        print("S es :"+str(S))
+        cir=auxiliar.circumcenter(D.points[S[0]],D.points[S[1]],D.points[S[2]])
         m=numpy.array(cir)
-        return list(m+1000000*V)
+        return (m+1000000*V).tolist()
     V=[]
     N=len(D.points)#Numero de puntos
     #Para cada punto saber su region
+    print("Checkpoint1")
     for v in range(N) :
         L=[A for A in D.simplices if v in A]#Todos los simplices en los que esta el vertice
+        print("Checkpoint2"+str(v))
+        print("L"+str(v)+"es:"+str(L))
         I=[E for E in D.convex_hull if v in E]#Aristas a las que pertenece el punto y que estan en el cierre convexo
-
+        print("Checkpoint3"+str(v))
+        print("I"+str(v)+"es:"+str(I))
         #Region del punto dada por los vertices que forman la region
-        R=[auxiliar.circumcenter(D.points(L[0]),D.points(L[1]),D.points(L[2]))]+[infinityPoint(e,D)for e in I]
+        #Formada por:
+        #  1.Circuncentros de los simplices en los que esta el punto
+        #  2.Puntos del infinito de las regiones no acotadas(si el punto pertenece al cierre convexo de la triangulacion)
+        print("L0[0] es :" + str(L[0]))
+        R=[auxiliar.circumcenter(D.points(l[0]),D.points(l[1]),D.points(l[2])) for l in L].extend([infinityPoint(e,D)for e in I])
         V.append(R)
     return V
+
+V=Voronoi(D)
+print("el diagrama de Voronoi es ")
+print(V)
 
 ###########TODO: Traducir esa funcion a codigo python
 # def Voronoi(p):

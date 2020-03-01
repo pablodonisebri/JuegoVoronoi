@@ -6,10 +6,10 @@ import sys
 from numpy.linalg import det
 import numpy.matrixlib as np
 
+
 def sarea(A,B,C):
 
     return (1/2 * ( ((B[0]-A[0])*(C[1]-A[1])) - ( (C[0]- A[0] )*(B[1]-A[1]) )) )
-
 
 
 def midPoint(A,B):
