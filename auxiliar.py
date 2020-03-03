@@ -1,4 +1,4 @@
-import pygame
+﻿#import pygame
 import random
 import scipy.spatial as sp
 from scipy.spatial import Delaunay
@@ -7,10 +7,12 @@ from numpy.linalg import det
 import numpy.matrixlib as np
 
 
+#def sarea(A,B,C):
+    #return (1/2 * ( ((B[0]-A[0])*(C[1]-A[1])) - ( (C[0]- A[0] )*(B[1]-A[1]) )) )
 def sarea(A,B,C):
-
     return (1/2 * ( ((B[0]-A[0])*(C[1]-A[1])) - ( (C[0]- A[0] )*(B[1]-A[1]) )) )
 
+    
 
 def midPoint(A,B):
 
@@ -88,5 +90,23 @@ def circumcenter(a,b,c):
    cx=det(np.matrix([[1,1,1],[a[1],b[1],c[1]],[a[0]**2+a[1]**2,b[0]**2+b[1]**2,c[0]**2+c[1]**2]]))/(-4*sa)
    cy=det(np.matrix([[1,1,1],[a[0],b[0],c[0]],[a[0]**2+a[1]**2,b[0]**2+b[1]**2,c[0]**2+c[1]**2]]))/(4*sa)
    return [cx,cy]
+
+
+def dist2(A,B):
+    
+    return  ((A[0]-B[0])**2 + (A[1]-B[1])**2)
+
+def angularSort(p,c):
+    #Listas left, right y alineados del punto 
+    L,R,A = [],[],[]
+    for i in p:
+        if i[0]<c[0]:
+            L.append(i)
+        elif i[0]>c[0]:
+            R.append(i)
+        
+        else:
+            A.append(i)
+    return sorted(R,key=lambda x : [((x[1]-c[1])/(x[0]-c[0])),dist2(x,c)])+ sorted(A,key=lambda x :[1, dist2(x,c)])+sorted(L,key=lambda x : [((x[1]-c[1])/(x[0]-c[0])),dist2(x,c)])
 
 
