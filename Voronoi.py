@@ -2,13 +2,10 @@ import pygame
 import random
 import scipy.spatial as sp
 from scipy.spatial import Delaunay
-from scipy.spatial import Voronoi
-from scipy.spatial import ConvexHull
 import sys
-from numpy.linalg import det
 import numpy
-import numpy.matrixlib as np
 import auxiliar as aux
+
 
 #############################################COMINENZO PROGRAMA####################################################
 
@@ -74,6 +71,10 @@ def Voronoi(D):
                    break
            inf2=infinityPoint([v,D.simplices[ultimos][((n+2)%3)]],D.simplices[ultimos],D)
            Region.insert(0,inf2)
+           Region=aux.clipping(Region,[[0,0],[700,0]])
+           Region=aux.clipping(Region,[[0,700],[0,0]])
+           Region=aux.clipping(Region,[[700,700],[0,700]])
+           Region=aux.clipping(Region,[[700,0],[700,700]])
            V.append(Region)
 
     return V
@@ -93,9 +94,10 @@ pygame.display.set_caption("TFG")
 ventana.fill((255,255,255))
 
 
-
+V=[]
+Area1=0
+Area2=0
 i=0
-empezar=False
 #Pedimos los primeros puntos
 while True:
     for event in pygame.event.get():
@@ -104,18 +106,30 @@ while True:
             #Obtenemos la posicion del raton que va hasta el punto (700,700)
                 raton = pygame.mouse.get_pos()
                 pygame.draw.circle(ventana,(100,100,100),raton,5)
-                p.append(raton)
                 pygame.display.update()
+                p.append(raton)
                 i=i+1
+
                 if i ==4:
                     break
-
-    if i==4 :
+    if i==4:
         break
+
+
 D=Delaunay(p)
 V=Voronoi(D)
-for v in V:
-                pygame.draw.polygon(ventana,(random.random()*255,random.random()*255,random.random()*255),v)
+for v in range (len(p)):
+                    if v%2:
+                        pygame.draw.polygon(ventana,(0,0,250),V[v])
+                        pygame.draw.polygon(ventana,(0,0,0),V[v],2)
+                        Area1=aux.Area(V[v])+Area1
+
+                    else:
+                        pygame.draw.polygon(ventana,(250,0,0),V[v])
+                        pygame.draw.polygon(ventana,(0,0,0),V[v],2)
+                        Area2=aux.Area(V[v])+Area2
+
+
 pygame.display.update()
 
 for po in p:
@@ -125,6 +139,7 @@ for po in p:
 
 #Bucle de "Juego"
 while True:
+
     for event in pygame.event.get():    #Cuando ocurre un evento...
         if event.type == pygame.QUIT:   #Si el evento es cerrar la ventana
             pygame.quit()               #Se cierra pygame
@@ -137,10 +152,23 @@ while True:
             p.append(raton)
             D=Delaunay(p)
             V=Voronoi(D)
+            Area1=0
+            Area2=0
 
+            for v in range (len(p)):
+                    if v%2:
+                        pygame.draw.polygon(ventana,(0,0,250),V[v])
+                        pygame.draw.polygon(ventana,(0,0,0),V[v],2)
+                        Area1=aux.Area(V[v])+Area1
 
-            for v in V:
-                pygame.draw.polygon(ventana,(random.random()*255,random.random()*255,random.random()*255),v)
+                    else:
+                        pygame.draw.polygon(ventana,(250,0,0),V[v])
+                        pygame.draw.polygon(ventana,(0,0,0),V[v],2)
+                        Area2=aux.Area(V[v])+Area2
+            print(p)
+            print(Area1)
+            print(Area2)
+            pygame.display.update()
 
             for po in p:
                  pygame.draw.circle(ventana,(0,0,0),po,5)
@@ -159,4 +187,4 @@ while True:
 
 
 
-
+#

@@ -4,8 +4,8 @@ import scipy.spatial as sp
 from scipy.spatial import Delaunay
 import sys
 from numpy.linalg import det
-import numpy.matrixlib as np
 
+import numpy
 
 #def sarea(A,B,C):
     #return (1/2 * ( ((B[0]-A[0])*(C[1]-A[1])) - ( (C[0]- A[0] )*(B[1]-A[1]) )) )
@@ -46,8 +46,8 @@ def lineIntersection(r,s):
             return []
 
         #Resolución por Cramer
-        x= det(np.Matrix([[c1,1],[c2,1]]))/det(np.Matrix([[-m1,1],[-m2,1]]))
-        y= det(np.Matrix([[-m1,c1],[-m2,c2]]))/det(np.Matrix([[-m1,1],[-m2,1]]))
+        x= det(numpy.matrix([[c1,1],[c2,1]]))/det(numpy.matrix([[-m1,1],[-m2,1]]))
+        y= det(numpy.matrix([[-m1,c1],[-m2,c2]]))/det(numpy.matrix([[-m1,1],[-m2,1]]))
 
         return [x,y]
     elif  (r[1][0]-r[0][0])==0 and (s[1][0]-s[0][0])==0 :
@@ -87,8 +87,8 @@ def circumcenter(a,b,c):
        print ("alineados")
        return
 
-   cx=det(np.matrix([[1,1,1],[a[1],b[1],c[1]],[a[0]**2+a[1]**2,b[0]**2+b[1]**2,c[0]**2+c[1]**2]]))/(-4*sa)
-   cy=det(np.matrix([[1,1,1],[a[0],b[0],c[0]],[a[0]**2+a[1]**2,b[0]**2+b[1]**2,c[0]**2+c[1]**2]]))/(4*sa)
+   cx=det(numpy.matrix([[1,1,1],[a[1],b[1],c[1]],[a[0]**2+a[1]**2,b[0]**2+b[1]**2,c[0]**2+c[1]**2]]))/(-4*sa)
+   cy=det(numpy.matrix([[1,1,1],[a[0],b[0],c[0]],[a[0]**2+a[1]**2,b[0]**2+b[1]**2,c[0]**2+c[1]**2]]))/(4*sa)
    return [cx,cy]
 
 
@@ -108,5 +108,42 @@ def angularSort(p,c):
         else:
             A.append(i)
     return sorted(R,key=lambda x : [((x[1]-c[1])/(x[0]-c[0])),dist2(x,c)])+ sorted(A,key=lambda x :[1, dist2(x,c)])+sorted(L,key=lambda x : [((x[1]-c[1])/(x[0]-c[0])),dist2(x,c)])
+
+
+#Region de Voronoi para un punto dentro un conjunto de puntos
+def voronoiRegion(p,i):
+    j=(i+1)%len(p)
+    [A,B]=mediatriz([p[i],p[j]])
+    v=[B[0]-A[0],B[1]-A[1]]
+    #Creamos un cuadrilatero infinito alrededor
+    A0=[A[0]-10000*v[0],A[1]-10000*v[1]]
+    A1=[A[0]+10000*v[0],A[1]+10000*v[1]]
+    A2=[A1[0]-10000*v[1],A1[0]+10000*v[0]]
+    A3=[A0[0]-10000*v[1],A0[0]+10000*v[0]]
+
+    R=[A0,A1,A2,A3]
+
+    for k in range (len(p)):
+        if k!=i and k!=j:
+            #Hacemos clipping con las mediatrices de los segmentos que le unen a los otros puntos
+            R=clipping(R,mediatriz([p[i],p[k]]))
+    R=clipping(R,[[0,0],[700,0]])
+    R=clipping(R,[[0,700],[0,0]])
+    R=clipping(R,[[700,700],[0,700]])
+    R=clipping(R,[[700,0],[700,700]])
+    return R
+
+#https://plot.ly/python/v3/polygon-area/
+def Area(corners):
+    n = len(corners)
+    area = 0.0
+    for i in range(n):
+        j = (i + 1) % n
+        area += corners[i][0] * corners[j][1]
+        area -= corners[j][0] * corners[i][1]
+    area = abs(area) / 2.0
+    return area
+
+
 
 
