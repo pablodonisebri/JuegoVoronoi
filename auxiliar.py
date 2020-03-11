@@ -21,8 +21,8 @@ def midPoint(A,B):
 
 def mediatriz(r):
     [A,B]=r #Vector de la recta
-    [Ap,Bp]=[[-B[0],-B[1]],A] # Vector perpendicular a la recta
-    vp=[Bp[0]-Ap[0],Bp[1]-Ap[1]]#Vector perpendicular a la recta
+
+    vp=[-(B[1]-A[1]),B[0]-A[0]]#Vector perpendicular a la recta
     m=midPoint(A,B)
     c=[m[0]+vp[0],m[1]+vp[1]]
 
@@ -111,27 +111,21 @@ def angularSort(p,c):
 
 
 #Region de Voronoi para un punto dentro un conjunto de puntos
+
 def voronoiRegion(p,i):
-    j=(i+1)%len(p)
-    [A,B]=mediatriz([p[i],p[j]])
-    v=[B[0]-A[0],B[1]-A[1]]
-    #Creamos un cuadrilatero infinito alrededor
-    A0=[A[0]-10000*v[0],A[1]-10000*v[1]]
-    A1=[A[0]+10000*v[0],A[1]+10000*v[1]]
-    A2=[A1[0]-10000*v[1],A1[0]+10000*v[0]]
-    A3=[A0[0]-10000*v[1],A0[0]+10000*v[0]]
 
-    R=[A0,A1,A2,A3]
+    if len(p)==1 and i==0:
+        return [[0,0],[700,0],[700,700],[0,700]]
 
-    for k in range (len(p)):
-        if k!=i and k!=j:
-            #Hacemos clipping con las mediatrices de los segmentos que le unen a los otros puntos
-            R=clipping(R,mediatriz([p[i],p[k]]))
-    R=clipping(R,[[0,0],[700,0]])
-    R=clipping(R,[[0,700],[0,0]])
-    R=clipping(R,[[700,700],[0,700]])
-    R=clipping(R,[[700,0],[700,700]])
-    return R
+    else:
+        Region=[[0,0],[700,0],[700,700],[0,700]]
+        for k in range (len(p)):
+            if k!=i :
+                Region=clipping(Region,mediatriz([p[i],p[k]]))
+        return Region
+
+
+
 
 #https://plot.ly/python/v3/polygon-area/
 def Area(corners):

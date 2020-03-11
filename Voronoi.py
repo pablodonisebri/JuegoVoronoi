@@ -13,17 +13,40 @@ from auxiliar import Voronoi
 
 p=[]
 l=1
+V=[]
+Area1=0
+Area2=0
+#Definimos i que sera para ver cuando el numero de puntos es menor que 4, se usa en la funcion juego
+i=0
 
 def juego():
+
     global i,l
     if i<3:
+        V=[]
+        Area1=0
+        Area2=0
         i=i+1
         raton = pygame.mouse.get_pos()
         if raton in p:
             p.append((raton[0]+l,raton[1]-l))
             l=l*(-1)
+
         else:
             p.append(raton)
+
+        print(len(p))
+        for k in range(len(p)):
+
+                V.append(aux.voronoiRegion(p,k))
+                if k%2:
+                    pygame.draw.polygon(ventana,(0,0,250),V[k])
+                    pygame.draw.polygon(ventana,(0,0,0),V[k],2)
+                    Area1=aux.Area(V[k])+Area1
+                else :
+                    pygame.draw.polygon(ventana,(250,0,0),V[k])
+                    pygame.draw.polygon(ventana,(0,0,0),V[k],2)
+                    Area2=aux.Area(V[k])+Area2
         for po in p:
             pygame.draw.circle(ventana,(0,0,0),po,5)
         return
@@ -56,11 +79,10 @@ def juego():
     # print(Area2)
 
     for po in p:
-        print(po)
-        pygame.draw.circle(ventana,(0,0,0) ,po , int(5))
-
+        pygame.draw.circle(ventana,(0,0,0),po,5)
 
     return
+
 
 
 
@@ -76,12 +98,11 @@ pygame.display.set_caption("TFG")
 ventana.fill((255,255,255))
 
 
-V=[]
-Area1=0
-Area2=0
-#Definimos i que sera para ver cuando el numero de puntos es menor que 4, se usa en la funcion juego
-i=0
-#Pedimos los primeros puntos
+
+
+
+
+
 
 
 
