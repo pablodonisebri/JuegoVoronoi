@@ -84,8 +84,8 @@ def clipping(P,r):
 def circumcenter(a,b,c):
    sa=sarea(a,b,c)
    if (sa==0):
-       print ("alineados")
-       return
+
+       return [(a[0]+b[0]+c[0])/3,(a[1]+b[1]+c[1])/3]
 
    cx=det(numpy.matrix([[1,1,1],[a[1],b[1],c[1]],[a[0]**2+a[1]**2,b[0]**2+b[1]**2,c[0]**2+c[1]**2]]))/(-4*sa)
    cy=det(numpy.matrix([[1,1,1],[a[0],b[0],c[0]],[a[0]**2+a[1]**2,b[0]**2+b[1]**2,c[0]**2+c[1]**2]]))/(4*sa)
@@ -143,6 +143,74 @@ def Area(corners):
         area -= corners[j][0] * corners[i][1]
     area = abs(area) / 2.0
     return area
+
+
+
+
+def infinityPoint(e,S,D):
+        A=D.points[e[0]]#Coordenada del primer punto de la arista
+        B=D.points[e[1]]#Coordenada del segundo punto de la arista
+
+        U=numpy.array(B)-numpy.array(A)
+
+        V=numpy.array([-U[1],U[0]])
+
+        cir=circumcenter(D.points[S[0]],D.points[S[1]],D.points[S[2]])
+        m=numpy.array(cir)
+        return (m+5*V).tolist()
+
+#Recibe la triangulación ya hecha, me interesa mas que sea asi ya que la triangulacion tiene la opcion incremental
+def Voronoi(D):
+    V=[]
+    N=len(D.points)#Numero de puntos
+    #Para cada punto saber su region
+    for v in range(N) :
+        Region=[]
+        #Ver en que simplice esta
+        s=D.vertex_to_simplex[v]
+        saux=s
+        ultimos=saux
+        #Construir la region metiendo primero el circuncentro del simplice al que sabemos que pertenece
+        c=circumcenter(D.points[D.simplices[s][0]],D.points[D.simplices[s][1]],D.points[D.simplices[s][2]])
+        Region.append(c)
+        #Viajamos a las regiones
+        while True:
+           ultimos=s
+           c=circumcenter(D.points[D.simplices[s][0]],D.points[D.simplices[s][1]],D.points[D.simplices[s][2]])
+           Region.append(c)
+           n=list(D.simplices[s]).index(v)
+           s=D.neighbors[s][(n+2)%3]
+           if s==saux or s==-1:
+
+               break
+        if s!=-1:
+            V.append(Region)
+            continue
+
+        else:
+           inf1=infinityPoint([D.simplices[ultimos][((n+1)%3)],v],D.simplices[ultimos],D)
+           Region.append(inf1)
+           s=saux
+
+           while True:
+               ultimos=s
+               if s!=saux:
+                   c=circumcenter(D.points[D.simplices[s][0]],D.points[D.simplices[s][1]],D.points[D.simplices[s][2]])
+                   Region.insert(0,c)
+                   #Region.append(c)
+               n=list(D.simplices[s]).index(v)
+               s=D.neighbors[s][(n+1)%3]
+               if  s==-1:
+                   break
+           inf2=infinityPoint([v,D.simplices[ultimos][((n+2)%3)]],D.simplices[ultimos],D)
+           Region.insert(0,inf2)
+           Region=clipping(Region,[[0,0],[700,0]])
+           Region=clipping(Region,[[0,700],[0,0]])
+           Region=clipping(Region,[[700,700],[0,700]])
+           Region=clipping(Region,[[700,0],[700,700]])
+           V.append(Region)
+
+    return V
 
 
 
