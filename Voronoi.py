@@ -12,21 +12,31 @@ from auxiliar import Voronoi
 
 
 p=[]
-
+l=1
 
 def juego():
-    global i
+    global i,l
     if i<3:
         i=i+1
         raton = pygame.mouse.get_pos()
-        p.append(raton)
+        if raton in p:
+            p.append((raton[0]+l,raton[1]-l))
+            l=l*(-1)
+        else:
+            p.append(raton)
         for po in p:
             pygame.draw.circle(ventana,(0,0,0),po,5)
         return
 
     raton = pygame.mouse.get_pos()
-    p.append(raton)
+    if raton in p:
+            p.append((raton[0]+l,raton[1]-l))
+            l=l*(-1)
+    else:
+        p.append(raton)
+
     D=Delaunay(p)
+    #D=Delaunay(p,qhull_options="Qc")
     V=Voronoi(D)
     Area1=0
     Area2=0
@@ -45,9 +55,9 @@ def juego():
     # print(Area1)
     # print(Area2)
 
-
     for po in p:
-        pygame.draw.circle(ventana,(0,0,0),po,5)
+        print(po)
+        pygame.draw.circle(ventana,(0,0,0) ,po , int(5))
 
 
     return

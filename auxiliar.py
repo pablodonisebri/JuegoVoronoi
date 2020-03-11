@@ -157,7 +157,7 @@ def infinityPoint(e,S,D):
 
         cir=circumcenter(D.points[S[0]],D.points[S[1]],D.points[S[2]])
         m=numpy.array(cir)
-        return (m+5*V).tolist()
+        return (m+5000*V).tolist()
 
 #Recibe la triangulación ya hecha, me interesa mas que sea asi ya que la triangulacion tiene la opcion incremental
 def Voronoi(D):
