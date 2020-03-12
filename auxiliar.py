@@ -92,23 +92,6 @@ def circumcenter(a,b,c):
    return [cx,cy]
 
 
-def dist2(A,B):
-    
-    return  ((A[0]-B[0])**2 + (A[1]-B[1])**2)
-
-def angularSort(p,c):
-    #Listas left, right y alineados del punto 
-    L,R,A = [],[],[]
-    for i in p:
-        if i[0]<c[0]:
-            L.append(i)
-        elif i[0]>c[0]:
-            R.append(i)
-        
-        else:
-            A.append(i)
-    return sorted(R,key=lambda x : [((x[1]-c[1])/(x[0]-c[0])),dist2(x,c)])+ sorted(A,key=lambda x :[1, dist2(x,c)])+sorted(L,key=lambda x : [((x[1]-c[1])/(x[0]-c[0])),dist2(x,c)])
-
 
 #Region de Voronoi para un punto dentro un conjunto de puntos
 
@@ -178,8 +161,13 @@ def Voronoi(D):
 
                break
         if s!=-1:
-            V.append(Region)
-            continue
+             Region=clipping(Region,[[0,0],[700,0]])
+             Region=clipping(Region,[[0,700],[0,0]])
+             Region=clipping(Region,[[700,700],[0,700]])
+             Region=clipping(Region,[[700,0],[700,700]])
+
+             V.append(Region)
+             continue
 
         else:
            inf1=infinityPoint([D.simplices[ultimos][((n+1)%3)],v],D.simplices[ultimos],D)

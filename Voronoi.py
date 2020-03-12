@@ -16,12 +16,31 @@ l=1
 V=[]
 Area1=0
 Area2=0
+Area=700*700
 #Definimos i que sera para ver cuando el numero de puntos es menor que 4, se usa en la funcion juego
 i=0
 
+
+
+def Poner_marcador():
+    global Area1,Area2
+    pygame.draw.rect(ventana, (250,250,250),marcador)
+    Area1=(Area1/Area)*100
+    print(Area1)
+    print(Area2)
+    Area2=(Area2/Area)*100
+    tArea1=font.render(str(Area1)+"%", True, (0, 0, 250))
+    tArea2=font.render(str(Area2)+"%", True, (250, 0, 0))
+    ventana.blit(tArea1, (15, 750))
+    ventana.blit(tArea2, (350, 750))
+    pygame.display.update()
+    return
+
+
+
 def juego():
 
-    global i,l
+    global i,l,Area1,Area2,Area
     if i<3:
         V=[]
         Area1=0
@@ -29,7 +48,7 @@ def juego():
         i=i+1
         raton = pygame.mouse.get_pos()
         if raton in p:
-            p.append((raton[0]+l,raton[1]-l))
+            p.append((raton[0]+l,raton[1]+l))
             l=l*(-1)
 
         else:
@@ -49,6 +68,8 @@ def juego():
                     Area2=aux.Area(V[k])+Area2
         for po in p:
             pygame.draw.circle(ventana,(0,0,0),po,5)
+
+        Poner_marcador()
         return
 
     raton = pygame.mouse.get_pos()
@@ -74,13 +95,11 @@ def juego():
             pygame.draw.polygon(ventana,(250,0,0),V[v])
             pygame.draw.polygon(ventana,(0,0,0),V[v],2)
             Area2=aux.Area(V[v])+Area2
-    # print(p)
-    # print(Area1)
-    # print(Area2)
 
     for po in p:
         pygame.draw.circle(ventana,(0,0,0),po,5)
 
+    Poner_marcador()
     return
 
 
@@ -91,16 +110,22 @@ def juego():
 pygame.init()
 
 #Establecemos el tamaño de la ventana.
-ventana = pygame.display.set_mode((700,700))
+ventana = pygame.display.set_mode((700,800))
+
+marcador=pygame.Rect(0,700,700,100)
 #podemos ponerle titulo a nuestra ventana, entre otras cosas,
 #icono, que sea redimensionable...
 pygame.display.set_caption("TFG")
 ventana.fill((255,255,255))
 
 
+pygame.draw.rect(ventana, (250,250,250),marcador)
+
+font = pygame.font.Font('freesansbold.ttf', 18)
 
 
 
+pygame.display.flip()
 
 
 
