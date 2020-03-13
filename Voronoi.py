@@ -120,12 +120,18 @@ ventana.fill((255,255,255))
 
 
 pygame.draw.rect(ventana, (250,250,250),marcador)
+pygame.display.flip()
 
 font = pygame.font.Font('freesansbold.ttf', 18)
 
 
 
-pygame.display.flip()
+
+
+
+
+
+
 
 
 
