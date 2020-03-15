@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 from auxiliar import *
 #from Voronoi import *
 
@@ -16,11 +17,51 @@ def movimiento(p,v):
     return ([p[0]+v[0],p[1]+v[1]],v)
 
 
+#Funcion para pintar en pantalla los diagramas despues de cada interaccion con el usuario
+def pintar():
+    global p
+    D=Delaunay(p)
+    V=Voronoi(D)
+    for v in range (len(p)-1):
+                    if v%2:
+                        pygame.draw.polygon(ventana,(0,0,250),V[v])
+                        pygame.draw.polygon(ventana,(0,0,0),V[v],2)
+                        pygame.draw.circle(ventana,(0,0,0),p[v],5)
+
+
+                    else:
+                        pygame.draw.polygon(ventana,(250,0,0),V[v])
+                        pygame.draw.polygon(ventana,(0,0,0),V[v],2)
+                        pygame.draw.circle(ventana,(0,0,0),p[v],5)
+
+
+                    pygame.draw.polygon(ventana,(0,250,0),V[len(p)-1])
+                    pygame.draw.polygon(ventana,(0,0,0),V[len(p)-1],2)
+                    pygame.draw.circle(ventana,(0,0,0),p[len(p)-1],5)
+
+
+    pygame.display.update()
 
 
 
+def teclas():
+    global vec
+    keys=pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        vec[len(p)-1]=[-5,0]
 
 
+    if keys[pygame.K_RIGHT]:
+        vec[len(p)-1]=[5,0]
+
+    if keys[pygame.K_UP]:
+        vec[len(p)-1]=[0,-5]
+
+
+    if keys[pygame.K_DOWN]:
+        vec[len(p)-1]=[0,5]
+
+    return
 
 
 
@@ -56,8 +97,6 @@ l=1
 
 while True:
 
-
-
     for event in pygame.event.get():    #Cuando ocurre un evento...
         if event.type == pygame.QUIT:   #Si el evento es cerrar la ventana
             pygame.quit()               #Se cierra pygame
@@ -74,74 +113,44 @@ while True:
                 p.append(raton)
                 vec.append([0,0])
 
-                D=Delaunay(p)
-                V=Voronoi(D)
-                for v in range (len(p)-1):
-                    if v%2:
-                        pygame.draw.polygon(ventana,(0,0,250),V[v])
-                        pygame.draw.polygon(ventana,(0,0,0),V[v],2)
-                        pygame.draw.circle(ventana,(0,0,0),p[v],5)
+                pintar()
 
 
-                    else:
-                        pygame.draw.polygon(ventana,(250,0,0),V[v])
-                        pygame.draw.polygon(ventana,(0,0,0),V[v],2)
-                        pygame.draw.circle(ventana,(0,0,0),p[v],5)
+        #elif event.type == pygame.KEYDOWN:
+            # # gets the key name
+            # key_name = pygame.key.name(event.key)
+            # # converts to uppercase the key name
+            # key_name = key_name.upper()
 
 
-                    pygame.draw.polygon(ventana,(0,250,0),V[len(p)-1])
-                    pygame.draw.polygon(ventana,(0,0,0),V[len(p)-1],2)
-                    pygame.draw.circle(ventana,(0,0,0),p[len(p)-1],5)
 
+                # if (event.key == K_LEFT):
+                #     print("1")
+                #     vec[len(p)-1]=[-5,0]
+                # elif (event.key == K_RIGHT):
+                #     vec[len(p)-1]=[5,0]
+                # elif (event.key == K_UP):
+                #      vec[len(p)-1]=[0,-5]
+                # elif (event.key == K_DOWN):
+                #      vec[len(p)-1]=[0,5]
 
-                pygame.display.update()
+    teclas()
+    for k in range (len(p)):
+        (p[k],vec[k])=movimiento(p[k],vec[k])
+    pintar()
 
-
-        elif event.type == pygame.KEYDOWN:
-            # gets the key name
-            key_name = pygame.key.name(event.key)
-            # converts to uppercase the key name
-            key_name = key_name.upper()
-
-            if  key_name=="UP":
-                vec[len(p)-1]=[0,-5]
-            elif key_name=="DOWN":
-
-                vec[len(p)-1]=[0,5]
-
-            elif key_name=="RIGHT":
-                vec[len(p)-1]=[5,0]
-
-            elif key_name=="LEFT":
-                vec[len(p)-1]=[-5,0]
-
-            for k in range (len(p)):
-                (p[k],vec[k])=movimiento(p[k],vec[k])
-
-            D=Delaunay(p)
-            V=Voronoi(D)
-            for v in range (len(p)-1):
-                    if v%2:
-                        pygame.draw.polygon(ventana,(0,0,250),V[v])
-                        pygame.draw.polygon(ventana,(0,0,0),V[v],2)
-                        pygame.draw.circle(ventana,(0,0,0),p[v],5)
-
-
-                    else:
-                        pygame.draw.polygon(ventana,(250,0,0),V[v])
-                        pygame.draw.polygon(ventana,(0,0,0),V[v],2)
-                        pygame.draw.circle(ventana,(0,0,0),p[v],5)
-
-
-                    pygame.draw.polygon(ventana,(0,250,0),V[len(p)-1])
-                    pygame.draw.polygon(ventana,(0,0,0),V[len(p)-1],2)
-                    pygame.draw.circle(ventana,(0,0,0),p[len(p)-1],5)
-
-
-            pygame.display.update()
-
-
-            continue
+        #continue
+            # if  key_name=="UP":
+            #     vec[len(p)-1]=[0,-5]
+            # elif key_name=="DOWN":
+            #      vec[len(p)-1]=[0,5]
+            # elif key_name=="RIGHT":
+            #     vec[len(p)-1]=[5,0]
+            # elif key_name=="LEFT":
+            #     vec[len(p)-1]=[-5,0]
+            # for k in range (len(p)):
+            #     (p[k],vec[k])=movimiento(p[k],vec[k])
+            # pintar()
 
 
 
@@ -150,4 +159,5 @@ while True:
 
 
 
-#
+
+
