@@ -2,10 +2,11 @@ import pygame
 from pygame.locals import *
 from auxiliar import *
 #from Voronoi import *
-
+import math
 
 #Funcion para determinar el movimiento de los puntos dandole un punto y un vector
-def movimiento(p,v):
+def movimiento(p,v,k):
+    v=colision(p,v,k)
     if p[0]>700:
         v=[-v[0],v[1]]
     elif p[0]<0:
@@ -17,49 +18,84 @@ def movimiento(p,v):
     return ([p[0]+v[0],p[1]+v[1]],v)
 
 
+#Funcion que se va a encargar de mantener distancia de seguridad entre los puntos y va a hacer que reboten en caso de colision
+def colision(point,vectorp,k):
+    global p,vec
+    #Ver si ese punto va a colisionar con algun otro punto
+    def abs(n):
+        if n >= 0:
+            return n
+        else:
+            return -n
+
+    def mod(v):
+        return int(math.sqrt(v[0]**2 +v[1]**2))
+
+    for j in range(len(p)):
+        rx=p[j][0]-point[0]
+        ry=p[j][1]-point[1]
+
+        if  j!=k and abs(rx)<12 and abs(ry)<12 :
+            vec[j]=[int(5*((vec[j][0]-vectorp[0])/(mod([vec[j][0]-vectorp[0],vec[j][1]-vectorp[1]])))),int(5*((vec[j][1]-vectorp[1])/(mod([vec[j][0]-vectorp[0],vec[j][1]-vectorp[1]]))))]
+
+            return [int(5*((vectorp[0]-vec[j][0])/(mod([vec[j][0]-vectorp[0],vec[j][1]-vectorp[1]])))),int(5*((vectorp[1]-vec[j][1])/(mod([vec[j][0]-vectorp[0],vec[j][1]-vectorp[1]]))))]
+
+    return [vectorp[0],vectorp[1]]
+
+
+
+
+
+
+
 #Funcion para pintar en pantalla los diagramas despues de cada interaccion con el usuario
 def pintar():
     global p
+
     D=Delaunay(p)
     V=Voronoi(D)
     for v in range (len(p)-1):
                     if v%2:
                         pygame.draw.polygon(ventana,(0,0,250),V[v])
                         pygame.draw.polygon(ventana,(0,0,0),V[v],2)
-                        pygame.draw.circle(ventana,(0,0,0),p[v],5)
+                        pygame.draw.circle(ventana,(143,143,143),p[v],9)
+                        pygame.draw.circle(ventana,(0,0,0),p[v],4)
 
 
                     else:
                         pygame.draw.polygon(ventana,(250,0,0),V[v])
                         pygame.draw.polygon(ventana,(0,0,0),V[v],2)
-                        pygame.draw.circle(ventana,(0,0,0),p[v],5)
+                        pygame.draw.circle(ventana,(143,143,143),p[v],9)
+                        pygame.draw.circle(ventana,(0,0,0),p[v],4)
 
 
                     pygame.draw.polygon(ventana,(0,250,0),V[len(p)-1])
                     pygame.draw.polygon(ventana,(0,0,0),V[len(p)-1],2)
-                    pygame.draw.circle(ventana,(0,0,0),p[len(p)-1],5)
+                    pygame.draw.circle(ventana,(143,143,143),p[len(p)-1],9)
+                    pygame.draw.circle(ventana,(0,0,0),p[len(p)-1],4)
+
 
 
     pygame.display.update()
 
 
-
+#Sacado del video : https://www.youtube.com/watch?v=i6xMBig-pP4
 def teclas():
     global vec
     keys=pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        vec[len(p)-1]=[-5,0]
+        vec[len(p)-1]=[-6,0]
 
 
     if keys[pygame.K_RIGHT]:
-        vec[len(p)-1]=[5,0]
+        vec[len(p)-1]=[6,0]
 
     if keys[pygame.K_UP]:
-        vec[len(p)-1]=[0,-5]
+        vec[len(p)-1]=[0,-6]
 
 
     if keys[pygame.K_DOWN]:
-        vec[len(p)-1]=[0,5]
+        vec[len(p)-1]=[0,6]
 
     return
 
@@ -85,9 +121,6 @@ p=[[int(random.random()*700),int(random.random()*700)] for i in range (9)]
 vec=[[int(random.random()*10),int(random.random()*10)] for i in range (9)]
 #Parametro para que no haya problema de superposicion de puntos
 l=1
-
-
-
 
 
 
@@ -136,7 +169,7 @@ while True:
 
     teclas()
     for k in range (len(p)):
-        (p[k],vec[k])=movimiento(p[k],vec[k])
+        (p[k],vec[k])=movimiento(p[k],vec[k],k)
     pintar()
 
         #continue
@@ -151,13 +184,3 @@ while True:
             # for k in range (len(p)):
             #     (p[k],vec[k])=movimiento(p[k],vec[k])
             # pintar()
-
-
-
-
-
-
-
-
-
-
