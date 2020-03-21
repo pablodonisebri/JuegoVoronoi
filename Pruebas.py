@@ -49,8 +49,10 @@ def movimiento(p,v,k):
 #Funcion para pintar en pantalla los diagramas despues de cada interaccion con el usuario
 def pintar():
     #En primer lugar se encarga de calcular la triangulacion y la division del plano en las regiones
-    global p
+    global p,Area2,Area1
     if len(p)<3:
+        Area1=0
+        Area2=0
         V=[]
         for k in range(len(p)):
 
@@ -60,13 +62,13 @@ def pintar():
                     pygame.draw.polygon(ventana,(0,0,0),V[k],2)
                     pygame.draw.circle(ventana,(143,143,143),p[k],9)
                     pygame.draw.circle(ventana,(0,0,0),p[k],4)
-                    #Area1=Area(V[k])+Area1
+                    Area1=Area(V[k])+Area1
                 else :
                     pygame.draw.polygon(ventana,(250,0,0),V[k])
                     pygame.draw.polygon(ventana,(0,0,0),V[k],2)
                     pygame.draw.circle(ventana,(143,143,143),p[k],9)
                     pygame.draw.circle(ventana,(0,0,0),p[k],4)
-                    #Area2=Area(V[k])+Area2
+                    Area2=Area(V[k])+Area2
 
 
         Poner_marcador()
@@ -78,6 +80,8 @@ def pintar():
     else :
         D=Delaunay(p)
         V=Voronoi(D)
+        Area1=0
+        Area2=0
 
     for v in range (len(V)-1):
                     if v%2:
@@ -86,6 +90,7 @@ def pintar():
                             pygame.draw.polygon(ventana,(0,0,0),V[v],2)
                         pygame.draw.circle(ventana,(143,143,143),p[v],9)
                         pygame.draw.circle(ventana,(0,0,0),p[v],4)
+                        Area1=Area(V[v])+Area1
 
 
                     else:
@@ -94,6 +99,8 @@ def pintar():
                             pygame.draw.polygon(ventana,(0,0,0),V[v],2)
                         pygame.draw.circle(ventana,(143,143,143),p[v],9)
                         pygame.draw.circle(ventana,(0,0,0),p[v],4)
+                        Area2=Area(V[v])+Area2
+
 
                     if len(V[len(p)-1])>2:
 
@@ -101,6 +108,13 @@ def pintar():
                         pygame.draw.polygon(ventana,(0,0,0),V[len(p)-1],2)
                     pygame.draw.circle(ventana,(143,143,143),p[len(p)-1],9)
                     pygame.draw.circle(ventana,(0,0,0),p[len(p)-1],4)
+                    #Se le debe sumar al rojo
+
+
+
+
+
+
 
 
 
@@ -139,12 +153,12 @@ def teclas():
 def Poner_marcador():
     global Area1,Area2
     pygame.draw.rect(ventana, (250,250,250),marcador)
-    #Area1=(Area1/Area)*100
+    Area1=(Area1/area)*100
     #print(Area1)
     #print(Area2)
-    #Area2=(Area2/Area)*100
-    tArea1=font.render(str("Hola")+"%", True, (0, 0, 250))
-    tArea2=font.render(str("ADIOS")+"%", True, (250, 0, 0))
+    Area2=(Area2/area)*100
+    tArea1=font.render(str(int(Area1))+"%", True, (0, 0, 250))
+    tArea2=font.render(str(int(Area2))+"%", True, (250, 0, 0))
     ventana.blit(tArea1, (15, 750))
     ventana.blit(tArea2, (350, 750))
     #pygame.display.update()
@@ -216,6 +230,9 @@ font = pygame.font.Font('freesansbold.ttf', 18)
 #p=[[int(random.random()*700),int(random.random()*700)] for i in range (9)]
 p=[]
 vec=[]
+Area1=0
+Area2=0
+area=700*700
 #Vectores de las direcciones en las que se van a mover los puntos
 #vec=[[int(random.random()*10),int(random.random()*10)] for i in range (9)]
 
