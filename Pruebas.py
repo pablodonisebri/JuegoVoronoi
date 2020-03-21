@@ -15,6 +15,9 @@ def colision(punto,vector,k):
     for i in range(len(p)):
         if i!=k and dist(punto,p[i])<20:
             #Aqui se debe producir el rebote
+            if vector==[0,0]:
+                return [vec[i][0],vec[i][1]]
+
             return [-vector[0],-vector[1]]
 
     return vector
@@ -47,8 +50,34 @@ def movimiento(p,v,k):
 def pintar():
     #En primer lugar se encarga de calcular la triangulacion y la division del plano en las regiones
     global p
-    D=Delaunay(p)
-    V=Voronoi(D)
+    if len(p)<3:
+        V=[]
+        for k in range(len(p)):
+
+                V.append(voronoiRegion(p,k))
+                if k%2:
+                    pygame.draw.polygon(ventana,(0,0,250),V[k])
+                    pygame.draw.polygon(ventana,(0,0,0),V[k],2)
+                    pygame.draw.circle(ventana,(143,143,143),p[k],9)
+                    pygame.draw.circle(ventana,(0,0,0),p[k],4)
+                    #Area1=Area(V[k])+Area1
+                else :
+                    pygame.draw.polygon(ventana,(250,0,0),V[k])
+                    pygame.draw.polygon(ventana,(0,0,0),V[k],2)
+                    pygame.draw.circle(ventana,(143,143,143),p[k],9)
+                    pygame.draw.circle(ventana,(0,0,0),p[k],4)
+                    #Area2=Area(V[k])+Area2
+
+
+        Poner_marcador()
+        pygame.display.update()
+        return
+
+
+
+    else :
+        D=Delaunay(p)
+        V=Voronoi(D)
 
     for v in range (len(V)-1):
                     if v%2:
@@ -76,8 +105,10 @@ def pintar():
 
 
 
-
+    Poner_marcador()
     pygame.display.update()
+    return
+
 
 
 #Sacado del video : https://www.youtube.com/watch?v=i6xMBig-pP4
@@ -102,23 +133,91 @@ def teclas():
 
 
 
+
+
+
+def Poner_marcador():
+    global Area1,Area2
+    pygame.draw.rect(ventana, (250,250,250),marcador)
+    #Area1=(Area1/Area)*100
+    #print(Area1)
+    #print(Area2)
+    #Area2=(Area2/Area)*100
+    tArea1=font.render(str("Hola")+"%", True, (0, 0, 250))
+    tArea2=font.render(str("ADIOS")+"%", True, (250, 0, 0))
+    ventana.blit(tArea1, (15, 750))
+    ventana.blit(tArea2, (350, 750))
+    #pygame.display.update()
+    return
+
+
+
+
+
+def juego():
+    global p,vec,l
+    #Los primeros cuatro puntos hay que pedirlos y calcular Voronoi haciendo clipping
+
+    raton = pygame.mouse.get_pos()
+
+    if raton[1]>700:
+        return
+
+    if raton in p:
+        raton=(raton[0]+l,raton[1]+l)
+        l=l*(-1)
+
+        # #LIMITA EL NUMERO DE PUNTOS QUE SE PUEDEN INSERTAR
+    if len(p)<20:
+        p.append(raton)
+        vec.append([0,0])
+        pintar()
+
+    return
+
+
+#
+# # #Inicializamos pygame
+# pygame.init()
+# #Establecemos el tamaño de la ventana.
+# ventana = pygame.display.set_mode((700,700))
+# #Titulo de la Ventana
+# pygame.display.set_caption("Prueba")
+# #Pintamos de blanco la ventana
+# ventana.fill((255,255,255))
+# pygame.display.flip()
+
+
 # #Inicializamos pygame
 pygame.init()
+
 #Establecemos el tamaño de la ventana.
-ventana = pygame.display.set_mode((700,700))
-#Titulo de la Ventana
-pygame.display.set_caption("Prueba")
-#Pintamos de blanco la ventana
+ventana = pygame.display.set_mode((700,800))
+
+marcador=pygame.Rect(0,700,700,100)
+#podemos ponerle titulo a nuestra ventana, entre otras cosas,
+#icono, que sea redimensionable...
+pygame.display.set_caption("TFG")
 ventana.fill((255,255,255))
+
+
+pygame.draw.rect(ventana, (250,250,250),marcador)
 pygame.display.flip()
+
+font = pygame.font.Font('freesansbold.ttf', 18)
+
+
+
+
 
 
 
 #Puntos ya generados en el plano que van a estar en movimiento
-p=[[int(random.random()*700),int(random.random()*700)] for i in range (9)]
-
+#p=[[int(random.random()*700),int(random.random()*700)] for i in range (9)]
+p=[]
+vec=[]
 #Vectores de las direcciones en las que se van a mover los puntos
-vec=[[int(random.random()*10),int(random.random()*10)] for i in range (9)]
+#vec=[[int(random.random()*10),int(random.random()*10)] for i in range (9)]
 
 #Los puntos y los vectores deben de ser numeros enteros para que no haya problema, ya que la pantalla es
 #una matriz de numeros enteros
@@ -140,24 +239,29 @@ while True:
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             #Obtenemos la posicion del raton que va hasta el punto (700,700)
+                juego()
 
-                raton = pygame.mouse.get_pos()
 
-                if raton in p:
-
-                    raton=(raton[0]+l,raton[1]+l)
-                    l=l*(-1)
-
-                #LIMITA EL NUMERO DE PUNTOS QUE SE PUEDEN INSERTAR
-                if len(p)<20:p.append(raton)
-                vec.append([0,0])
-
-                pintar()
+                # raton = pygame.mouse.get_pos()
+                # if raton[1]>700:
+                #     continue
+                #
+                # if raton in p:
+                #
+                #     raton=(raton[0]+l,raton[1]+l)
+                #     l=l*(-1)
+                #
+                # #LIMITA EL NUMERO DE PUNTOS QUE SE PUEDEN INSERTAR
+                # if len(p)<20:p.append(raton)
+                # vec.append([0,0])
+                #
+                # pintar()
 
     teclas()
 
     for k in range (len(p)):
         (p[k],vec[k])=movimiento(p[k],vec[k],k)
+
 
     pintar()
 
