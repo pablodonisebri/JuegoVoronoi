@@ -8,43 +8,28 @@ import math
 def dist(A,B):
      return math.sqrt((A[0]-B[0])**2 + (A[1]-B[1])**2)
 
-
-def colision(punto,vector,k):
+def movimiento():
     global p,vec
-
+    #Primero movemos puntos
+    for j in range(len(p)):
+        #Si el punto llega al borde debe rebotar
+         if p[j][0]>700:
+            vec[j]=[-vec[j][0],vec[j][1]]
+         elif p[j][0]<0:
+            vec[j]=[-vec[j][0],vec[j][1]]
+         elif p[j][1]<0:
+            vec[j]=[vec[j][0],-vec[j][1]]
+         elif p[j][1]>700:
+            vec[j]=[vec[j][0],-vec[j][1]]
+         #Se mueve el punto sumandole el vector
+         p[j]=[p[j][0]+vec[j][0],p[j][1]+vec[j][1]]
+    #Segundo ,tratamos colisiones
     for i in range(len(p)):
-        if i!=k and dist(punto,p[i])<20:
-            #Aqui se debe producir el rebote
-            if vector==[0,0]:
-                return [vec[i][0],vec[i][1]]
-
-            return [-vector[0],-vector[1]]
-
-    return vector
-
-
-
-#Funcion para determinar el movimiento de los puntos dandole un punto y un vector
-def movimiento(p,v,k):
-    v=colision(p,v,k)
-    if p[0]>700:
-        v=[-v[0],v[1]]
-    elif p[0]<0:
-        v=[-v[0],v[1]]
-    elif p[1]<0:
-        v=[v[0],-v[1]]
-    elif p[1]>700:
-        v=[v[0],-v[1]]
-    if [p[0]+v[0],p[1]+v[1]] in p:
-        return ([p[0]+v[0]+2+int(random.random()*10),p[1]+v[1]-6],[v[0]+1,v[1]+1])
-    if ([p[0]+v[0],p[1]+v[1]],v) in p: return ([p[0]+v[0]+1,p[1]+v[1]-1],v)
-    return ([p[0]+v[0],p[1]+v[1]],v)
-
-
-
-
-
-
+        for j in range(len(p)):
+            if i!=j and dist(p[j],p[i])<20:
+                    vec[i]=[-vec[i][0],-vec[i][1]]
+                    break
+    return
 
 #Funcion para pintar en pantalla los diagramas despues de cada interaccion con el usuario
 def pintar():
@@ -74,8 +59,6 @@ def pintar():
         Poner_marcador()
         pygame.display.update()
         return
-
-
 
     else :
         D=Delaunay(p)
@@ -110,15 +93,6 @@ def pintar():
                     pygame.draw.circle(ventana,(0,0,0),p[len(p)-1],4)
                     #Se le debe sumar al rojo
 
-
-
-
-
-
-
-
-
-
     Poner_marcador()
     pygame.display.update()
     return
@@ -145,11 +119,6 @@ def teclas():
 
     return
 
-
-
-
-
-
 def Poner_marcador():
     global Area1,Area2
     pygame.draw.rect(ventana, (250,250,250),marcador)
@@ -164,42 +133,22 @@ def Poner_marcador():
     #pygame.display.update()
     return
 
-
-
-
-
 def juego():
     global p,vec,l
     #Los primeros cuatro puntos hay que pedirlos y calcular Voronoi haciendo clipping
-
     raton = pygame.mouse.get_pos()
-
     if raton[1]>700:
         return
-
-    if raton in p:
-        raton=(raton[0]+l,raton[1]+l)
-        l=l*(-1)
-
         # #LIMITA EL NUMERO DE PUNTOS QUE SE PUEDEN INSERTAR
-    if len(p)<20:
+    if len(p)<200:
+        if raton in p:
+            raton=(raton[0]+l,raton[1]+l)
+            l=l*(-1)
         p.append(raton)
         vec.append([0,0])
         pintar()
-
     return
 
-
-#
-# # #Inicializamos pygame
-# pygame.init()
-# #Establecemos el tamaño de la ventana.
-# ventana = pygame.display.set_mode((700,700))
-# #Titulo de la Ventana
-# pygame.display.set_caption("Prueba")
-# #Pintamos de blanco la ventana
-# ventana.fill((255,255,255))
-# pygame.display.flip()
 
 
 # #Inicializamos pygame
@@ -241,14 +190,8 @@ area=700*700
 
 #Parametro para que no haya problema de superposicion de puntos
 l=1
-
-
-
-
 #Bucle del juego (Se encarga sobretodo de la interacción con el usuario)
-
 while True:
-
     for event in pygame.event.get():    #Cuando ocurre un evento...
         if event.type == pygame.QUIT:   #Si el evento es cerrar la ventana
             pygame.quit()               #Se cierra pygame
@@ -257,29 +200,8 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             #Obtenemos la posicion del raton que va hasta el punto (700,700)
                 juego()
-
-
-                # raton = pygame.mouse.get_pos()
-                # if raton[1]>700:
-                #     continue
-                #
-                # if raton in p:
-                #
-                #     raton=(raton[0]+l,raton[1]+l)
-                #     l=l*(-1)
-                #
-                # #LIMITA EL NUMERO DE PUNTOS QUE SE PUEDEN INSERTAR
-                # if len(p)<20:p.append(raton)
-                # vec.append([0,0])
-                #
-                # pintar()
-
     teclas()
-
-    for k in range (len(p)):
-        (p[k],vec[k])=movimiento(p[k],vec[k],k)
-
-
+    movimiento()
     pintar()
 
 
