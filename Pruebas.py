@@ -3,6 +3,9 @@ from pygame.locals import *
 from auxiliar import *
 #from Voronoi import *
 import math
+from itertools import combinations
+
+
 
 
 def dist(A,B):
@@ -24,11 +27,20 @@ def movimiento():
          #Se mueve el punto sumandole el vector
          p[j]=[p[j][0]+vec[j][0],p[j][1]+vec[j][1]]
     #Segundo ,tratamos colisiones
-    for i in range(len(p)):
-        for j in range(len(p)):
-            if i!=j and dist(p[j],p[i])<20:
-                    vec[i]=[-vec[i][0],-vec[i][1]]
-                    break
+    colision=[]
+
+    comb=combinations([i for i in range(len(p))],2)
+    for c in comb:
+        if dist(p[c[1]],p[c[0]])<18:
+            colision.append([c[1],c[0]])
+        continue
+    for [v1,v2] in colision:
+        #Tratar las colisiones
+        #EL rebote se hace intercambiando los vectores velocidad de cada uno
+        aux=vec[v1]
+        vec[v1]=vec[v2]
+        vec[v2]=aux
+
     return
 
 #Funcion para pintar en pantalla los diagramas despues de cada interaccion con el usuario
@@ -45,17 +57,15 @@ def pintar():
                 if k%2:
                     pygame.draw.polygon(ventana,(0,0,250),V[k])
                     pygame.draw.polygon(ventana,(0,0,0),V[k],2)
-                    pygame.draw.circle(ventana,(143,143,143),p[k],9)
-                    pygame.draw.circle(ventana,(0,0,0),p[k],4)
+                    pygame.draw.circle(ventana,(143,143,143),[int(p[k][0]),int(p[k][1])],9)
+                    pygame.draw.circle(ventana,(0,0,0),[int(p[k][0]),int(p[k][1])],4)
                     Area1=Area(V[k])+Area1
                 else :
                     pygame.draw.polygon(ventana,(250,0,0),V[k])
                     pygame.draw.polygon(ventana,(0,0,0),V[k],2)
-                    pygame.draw.circle(ventana,(143,143,143),p[k],9)
-                    pygame.draw.circle(ventana,(0,0,0),p[k],4)
+                    pygame.draw.circle(ventana,(143,143,143),[int(p[k][0]),int(p[k][1])],9)
+                    pygame.draw.circle(ventana,(0,0,0),[int(p[k][0]),int(p[k][1])],4)
                     Area2=Area(V[k])+Area2
-
-
         Poner_marcador()
         pygame.display.update()
         return
@@ -71,8 +81,8 @@ def pintar():
                         if len(V[v])>2:
                             pygame.draw.polygon(ventana,(0,0,250),V[v])
                             pygame.draw.polygon(ventana,(0,0,0),V[v],2)
-                        pygame.draw.circle(ventana,(143,143,143),p[v],9)
-                        pygame.draw.circle(ventana,(0,0,0),p[v],4)
+                        pygame.draw.circle(ventana,(143,143,143),[int(p[v][0]),int(p[v][1])],9)
+                        pygame.draw.circle(ventana,(0,0,0),[int(p[v][0]),int(p[v][1])],4)
                         Area1=Area(V[v])+Area1
 
 
@@ -80,8 +90,8 @@ def pintar():
                         if len(V[v])>2:
                             pygame.draw.polygon(ventana,(250,0,0),V[v])
                             pygame.draw.polygon(ventana,(0,0,0),V[v],2)
-                        pygame.draw.circle(ventana,(143,143,143),p[v],9)
-                        pygame.draw.circle(ventana,(0,0,0),p[v],4)
+                        pygame.draw.circle(ventana,(143,143,143),[int(p[v][0]),int(p[v][1])],9)
+                        pygame.draw.circle(ventana,(0,0,0),[int(p[v][0]),int(p[v][1])],4)
                         Area2=Area(V[v])+Area2
 
 
@@ -89,8 +99,8 @@ def pintar():
 
                         pygame.draw.polygon(ventana,(0,250,0),V[len(p)-1])
                         pygame.draw.polygon(ventana,(0,0,0),V[len(p)-1],2)
-                    pygame.draw.circle(ventana,(143,143,143),p[len(p)-1],9)
-                    pygame.draw.circle(ventana,(0,0,0),p[len(p)-1],4)
+                    pygame.draw.circle(ventana,(143,143,143),[int(p[len(p)-1][0]),int(p[len(p)-1][1])],9)
+                    pygame.draw.circle(ventana,(0,0,0),[int(p[len(p)-1][0]),int(p[len(p)-1][1])],4)
                     #Se le debe sumar al rojo
 
     Poner_marcador()
@@ -104,20 +114,49 @@ def teclas():
     global vec
     keys=pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        vec[len(p)-1]=[-6,0]
+        #vec[len(p)-1]=[-6,0]
+        vec[len(p)-1]=[vec[len(p)-1][0]-1,vec[len(p)-1][1]]
+        #Despues de mover el punto normalizamos la velocidad
+        norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
+        if norma==0:
+            norma=1
+        vec[len(p)-1]=[  ((vec[len(p)-1][0])/norma ) ,((vec[len(p)-1][1])/norma ) ]
+
 
 
     if keys[pygame.K_RIGHT]:
-        vec[len(p)-1]=[6,0]
+        #vec[len(p)-1]=[6,0]
+        vec[len(p)-1]=[vec[len(p)-1][0]+1,vec[len(p)-1][1]]
+        #Despues de mover el punto normalizamos la velocidad
+        norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
+        if norma==0:
+            norma=1
+        vec[len(p)-1]=[  ((vec[len(p)-1][0])/norma ) , ((vec[len(p)-1][1])/norma ) ]
 
     if keys[pygame.K_UP]:
-        vec[len(p)-1]=[0,-6]
+        #vec[len(p)-1]=[0,-6]
+        vec[len(p)-1]=[vec[len(p)-1][0],vec[len(p)-1][1]-2]
+        #Despues de mover el punto normalizamos la velocidad
+        norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
+        if norma==0:
+            norma=1
 
+
+        vec[len(p)-1]=[  ((vec[len(p)-1][0])/norma ) , ((vec[len(p)-1][1])/norma ) ]
 
     if keys[pygame.K_DOWN]:
-        vec[len(p)-1]=[0,6]
+        #vec[len(p)-1]=[0,6]
+        vec[len(p)-1]=[vec[len(p)-1][0],vec[len(p)-1][1]+1]
+        #Despues de mover el punto normalizamos la velocidad
+        norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
+        if norma==0:
+            norma=1
+        vec[len(p)-1]=[  ((vec[len(p)-1][0])/norma ) , ((vec[len(p)-1][1])/norma ) ]
+
+
 
     return
+
 
 def Poner_marcador():
     global Area1,Area2
@@ -168,10 +207,6 @@ pygame.draw.rect(ventana, (250,250,250),marcador)
 pygame.display.flip()
 
 font = pygame.font.Font('freesansbold.ttf', 18)
-
-
-
-
 
 
 
