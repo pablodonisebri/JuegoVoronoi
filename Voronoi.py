@@ -8,6 +8,7 @@ import auxiliar as aux
 from auxiliar import Voronoi
 
 
+
 #############################################COMINENZO PROGRAMA####################################################
 
 
@@ -26,13 +27,16 @@ def Poner_marcador():
     global Area1,Area2
     pygame.draw.rect(ventana, (250,250,250),marcador)
     Area1=(Area1/Area)*100
-    print(Area1)
-    print(Area2)
+    # print(Area1)
+    # print(Area2)
     Area2=(Area2/Area)*100
     tArea1=font.render(str(Area1)+"%", True, (0, 0, 250))
     tArea2=font.render(str(Area2)+"%", True, (250, 0, 0))
     ventana.blit(tArea1, (15, 750))
     ventana.blit(tArea2, (350, 750))
+    ventana.blit(return_cadena, (return_rect.centerx-30, return_rect.centery-10))
+    pygame.draw.rect(ventana,(0, 0, 0),return_rect,2)
+
     pygame.display.update()
     return
 
@@ -40,13 +44,26 @@ def Poner_marcador():
 
 def juego():
 
-    global i,l,Area1,Area2,Area
+    global p,V,i,l,Area1,Area2,Area
+    raton = pygame.mouse.get_pos()
+
+    if return_rect.collidepoint(raton):
+        #import Juego
+        V=[]
+        p=[]
+        Area1=0
+        Area2=0
+        exec(open('Juego.py').read())
+
+    if raton[1]>700:
+        return
+
     if i<3:
         V=[]
         Area1=0
         Area2=0
         i=i+1
-        raton = pygame.mouse.get_pos()
+
         if raton in p:
             p.append((raton[0]+l,raton[1]+l))
             l=l*(-1)
@@ -72,7 +89,6 @@ def juego():
         Poner_marcador()
         return
 
-    raton = pygame.mouse.get_pos()
     if raton in p:
             p.append((raton[0]+l,raton[1]-l))
             l=l*(-1)
@@ -106,8 +122,11 @@ def juego():
 
 
 
+
 # #Inicializamos pygame
 pygame.init()
+
+
 
 #Establecemos el tamaño de la ventana.
 ventana = pygame.display.set_mode((700,800))
@@ -118,30 +137,22 @@ marcador=pygame.Rect(0,700,700,100)
 pygame.display.set_caption("TFG")
 ventana.fill((255,255,255))
 
-
 pygame.draw.rect(ventana, (250,250,250),marcador)
-pygame.display.flip()
-
 font = pygame.font.Font('freesansbold.ttf', 18)
 
 
 
+return_cadena=font.render('return', True, (0, 0, 0))
+return_rect=pygame.Rect(580,740,100,50)
+pygame.draw.rect(ventana,(255, 255, 255),return_rect)
+pygame.draw.rect(ventana,(0, 0, 0),return_rect,2)
+ventana.blit(return_cadena, (return_rect.centerx-30, return_rect.centery-10))
 
 
-
-
-
-
-
-
-
-
+pygame.display.flip()
 
 #Bucle de "Juego"
 while True:
-
-
-
     for event in pygame.event.get():    #Cuando ocurre un evento...
         if event.type == pygame.QUIT:   #Si el evento es cerrar la ventana
             pygame.quit()               #Se cierra pygame
@@ -149,19 +160,9 @@ while True:
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             #Obtenemos la posicion del raton que va hasta el punto (700,700)
+
             juego()
             pygame.display.flip()
             
 
-        else:
 
-            print("")
-
-
-   # pygame.display.flip()               #Genera la ventana
-
-
-
-
-
-#

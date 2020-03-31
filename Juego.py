@@ -42,9 +42,11 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             raton = pygame.mouse.get_pos()
             if normal.collidepoint(raton):
-                import Voronoi.py
+                #import Voronoi.py
+                exec(open('Voronoi.py').read())
             elif dinamico.collidepoint(raton):
-                import Pruebas.py
+                #import Pruebas.py
+                exec(open('Pruebas.py').read())
 
 
 

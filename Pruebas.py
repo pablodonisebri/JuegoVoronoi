@@ -115,6 +115,7 @@ def pintar():
 
 
 
+
     Poner_marcador()
     pygame.display.update()
     return
@@ -181,6 +182,8 @@ def Poner_marcador():
     tArea2=font.render(str(int(Area2))+"%", True, (250, 0, 0))
     ventana.blit(tArea1, (15, 750))
     ventana.blit(tArea2, (350, 750))
+    ventana.blit(return_cadena, (return_rect.centerx-30, return_rect.centery-10))
+    pygame.draw.rect(ventana,(0, 0, 0),return_rect,2)
     #pygame.display.update()
     return
 
@@ -188,8 +191,16 @@ def juego():
     global p,vec,l
     #Los primeros cuatro puntos hay que pedirlos y calcular Voronoi haciendo clipping
     raton = pygame.mouse.get_pos()
+    if return_rect.collidepoint(raton):
+        #import Juego
+        V=[]
+        p=[]
+        Area1=0
+        Area2=0
+        exec(open('Juego.py').read())
     if raton[1]>700:
         return
+
         # #LIMITA EL NUMERO DE PUNTOS QUE SE PUEDEN INSERTAR
     if len(p)<200:
         if raton in p:
@@ -216,11 +227,18 @@ ventana.fill((255,255,255))
 
 
 pygame.draw.rect(ventana, (250,250,250),marcador)
-pygame.display.flip()
+
 
 font = pygame.font.Font('freesansbold.ttf', 18)
 
 
+return_cadena=font.render('return', True, (0, 0, 0))
+return_rect=pygame.Rect(580,740,100,50)
+pygame.draw.rect(ventana,(255, 255, 255),return_rect)
+pygame.draw.rect(ventana,(0, 0, 0),return_rect,2)
+ventana.blit(return_cadena, (return_rect.centerx-30, return_rect.centery-10))
+
+pygame.display.flip()
 
 #Puntos ya generados en el plano que van a estar en movimiento
 #p=[[int(random.random()*700),int(random.random()*700)] for i in range (9)]
