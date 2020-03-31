@@ -96,12 +96,24 @@ def pintar():
 
 
                     if len(V[len(p)-1])>2:
+                        if (len(p)-1)%2:
+                            pygame.draw.polygon(ventana,(210, 210, 250),V[len(p)-1])
 
-                        pygame.draw.polygon(ventana,(0,250,0),V[len(p)-1])
+                        else :
+                            pygame.draw.polygon(ventana,(255, 160, 122),V[len(p)-1])
+
+
+
                         pygame.draw.polygon(ventana,(0,0,0),V[len(p)-1],2)
                     pygame.draw.circle(ventana,(143,143,143),[int(p[len(p)-1][0]),int(p[len(p)-1][1])],9)
                     pygame.draw.circle(ventana,(0,0,0),[int(p[len(p)-1][0]),int(p[len(p)-1][1])],4)
                     #Se le debe sumar al rojo
+    if (len(p)-1)%2:
+         Area1=Area(V[len(p)-1])+Area1
+    else:
+        Area2=Area(V[len(p)-1])+Area2
+
+
 
     Poner_marcador()
     pygame.display.update()
