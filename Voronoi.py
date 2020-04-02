@@ -4,7 +4,7 @@ import scipy.spatial as sp
 from scipy.spatial import Delaunay
 import sys
 import numpy
-import auxiliar as aux
+from auxiliar import *
 from auxiliar import Voronoi
 
 
@@ -17,7 +17,7 @@ l=1
 V=[]
 Area1=0
 Area2=0
-Area=700*700
+area=700*700
 #Definimos i que sera para ver cuando el numero de puntos es menor que 4, se usa en la funcion juego
 i=0
 
@@ -26,10 +26,10 @@ i=0
 def Poner_marcador():
     global Area1,Area2
     pygame.draw.rect(ventana, (250,250,250),marcador)
-    Area1=(Area1/Area)*100
+    Area1=(Area1/area)*100
     # print(Area1)
     # print(Area2)
-    Area2=(Area2/Area)*100
+    Area2=(Area2/area)*100
     tArea1=font.render(str(Area1)+"%", True, (0, 0, 250))
     tArea2=font.render(str(Area2)+"%", True, (250, 0, 0))
     ventana.blit(tArea1, (15, 750))
@@ -44,7 +44,7 @@ def Poner_marcador():
 
 def juego():
 
-    global p,V,i,l,Area1,Area2,Area
+    global p,V,i,l,Area1,Area2,area
     raton = pygame.mouse.get_pos()
 
     if return_rect.collidepoint(raton):
@@ -74,15 +74,15 @@ def juego():
         print(len(p))
         for k in range(len(p)):
 
-                V.append(aux.voronoiRegion(p,k))
+                V.append(voronoiRegion(p,k))
                 if k%2:
                     pygame.draw.polygon(ventana,(0,0,250),V[k])
                     pygame.draw.polygon(ventana,(0,0,0),V[k],2)
-                    Area1=aux.Area(V[k])+Area1
+                    Area1=Area(V[k])+Area1
                 else :
                     pygame.draw.polygon(ventana,(250,0,0),V[k])
                     pygame.draw.polygon(ventana,(0,0,0),V[k],2)
-                    Area2=aux.Area(V[k])+Area2
+                    Area2=Area(V[k])+Area2
         for po in p:
             pygame.draw.circle(ventana,(0,0,0),po,5)
 
@@ -105,12 +105,12 @@ def juego():
         if v%2:
             pygame.draw.polygon(ventana,(0,0,250),V[v])
             pygame.draw.polygon(ventana,(0,0,0),V[v],2)
-            Area1=aux.Area(V[v])+Area1
+            Area1=Area(V[v])+Area1
 
         else:
             pygame.draw.polygon(ventana,(250,0,0),V[v])
             pygame.draw.polygon(ventana,(0,0,0),V[v],2)
-            Area2=aux.Area(V[v])+Area2
+            Area2=Area(V[v])+Area2
 
     for po in p:
         pygame.draw.circle(ventana,(0,0,0),po,5)
