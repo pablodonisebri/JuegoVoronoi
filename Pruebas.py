@@ -7,6 +7,9 @@ from itertools import combinations
 
 
 
+velocidad=0
+
+
 
 def dist(A,B):
      return math.sqrt((A[0]-B[0])**2 + (A[1]-B[1])**2)
@@ -121,9 +124,9 @@ def pintar():
 
 #Sacado del video : https://www.youtube.com/watch?v=i6xMBig-pP4
 def teclas():
-    global vec
+    global vec,velocidad
     keys=pygame.key.get_pressed()
-    n=3#Velocidad de los puntos
+    #n=3#Velocidad de los puntos
     if keys[pygame.K_LEFT]:
         #vec[len(p)-1]=[-6,0]
         vec[len(p)-1]=[vec[len(p)-1][0]-1,vec[len(p)-1][1]]
@@ -131,7 +134,7 @@ def teclas():
         norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
         if norma==0:
             norma=1
-        vec[len(p)-1]=[  n*((vec[len(p)-1][0])/norma ) ,n*((vec[len(p)-1][1])/norma ) ]
+        vec[len(p)-1]=[  velocidad*((vec[len(p)-1][0])/norma ) ,velocidad*((vec[len(p)-1][1])/norma ) ]
 
 
 
@@ -142,7 +145,7 @@ def teclas():
         norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
         if norma==0:
             norma=1
-        vec[len(p)-1]=[  n*((vec[len(p)-1][0])/norma ) , n*((vec[len(p)-1][1])/norma ) ]
+        vec[len(p)-1]=[  velocidad*((vec[len(p)-1][0])/norma ) , velocidad*((vec[len(p)-1][1])/norma ) ]
 
     if keys[pygame.K_UP]:
         #vec[len(p)-1]=[0,-6]
@@ -153,7 +156,7 @@ def teclas():
             norma=1
 
 
-        vec[len(p)-1]=[  n*((vec[len(p)-1][0])/norma ) , n*((vec[len(p)-1][1])/norma ) ]
+        vec[len(p)-1]=[  velocidad*((vec[len(p)-1][0])/norma ) , velocidad*((vec[len(p)-1][1])/norma ) ]
 
     if keys[pygame.K_DOWN]:
         #vec[len(p)-1]=[0,6]
@@ -162,9 +165,7 @@ def teclas():
         norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
         if norma==0:
             norma=1
-        vec[len(p)-1]=[  n*((vec[len(p)-1][0])/norma ) , n*((vec[len(p)-1][1])/norma ) ]
-
-
+        vec[len(p)-1]=[  velocidad*((vec[len(p)-1][0])/norma ) , velocidad*((vec[len(p)-1][1])/norma ) ]
 
     return
 
@@ -182,6 +183,8 @@ def Poner_marcador():
     ventana.blit(tArea2, (350, 750))
     ventana.blit(return_cadena, (return_rect.centerx-30, return_rect.centery-10))
     pygame.draw.rect(ventana,(0, 0, 0),return_rect,2)
+    n_puntos=font.render(str(len(p))+" puntos", True, (0, 0, 250))
+    ventana.blit(n_puntos,(580,710))
     #pygame.display.update()
     return
 
@@ -201,7 +204,8 @@ def juego():
         return
 
         # #LIMITA EL NUMERO DE PUNTOS QUE SE PUEDEN INSERTAR
-    if len(p)<200:
+    #Ahora le he puesto un máximo de 10 puntos por jugador
+    if len(p)<20:
         if raton in p:
             raton=(raton[0]+l,raton[1]+l)
             l=l*(-1)
@@ -254,6 +258,67 @@ area=700*700
 
 #Parametro para que no haya problema de superposicion de puntos
 l=1
+
+
+#Bucle de seleccion de la velocidad de los puntos
+
+#Aqui voy a definir el número máximo de puntos que habrá en la partida
+lento_rect=pygame.Rect(200,100,300,100)
+rapido_rect=pygame.Rect(200,500,300,100)
+medio_rect= pygame.Rect(200,300,300,100)
+
+
+
+pygame.draw.rect(ventana, (72, 209, 204),lento_rect)
+pygame.draw.rect(ventana, (72, 209, 204),medio_rect)
+pygame.draw.rect(ventana, (72, 209, 204),rapido_rect)
+
+font2 = pygame.font.Font('freesansbold.ttf', 20)
+
+puntos_cadena=font.render('Escoge la velocidad del movimiento de los puntos', True, (0, 0, 0))
+lento_cadena=font2.render('Lenta ', True, (0, 0, 0))
+medio_cadena=font2.render('Media', True, (0, 0, 0))
+rapido_cadena=font2.render('Rápida', True, (0, 0, 0))
+
+
+
+ventana.blit(rapido_cadena, (rapido_rect.centerx-80, rapido_rect.centery-10))
+ventana.blit(medio_cadena, (medio_rect.centerx-80, medio_rect.centery-10))
+ventana.blit(lento_cadena, (lento_rect.centerx-80, lento_rect.centery-10))
+ventana.blit(puntos_cadena, (lento_rect.centerx-200, lento_rect.centery-100))
+
+pygame.display.flip()
+
+
+#Bucle de seleccion
+while True:
+    for event in pygame.event.get():    #Cuando ocurre un evento...
+        if event.type == pygame.QUIT:   #Si el evento es cerrar la ventana
+            pygame.quit()               #Se cierra pygame
+            sys.exit()                  #Se cierra el programa
+
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            #Obtenemos la posicion del raton que va hasta el punto (700,700)
+            raton=pygame.mouse.get_pos()
+            if lento_rect.collidepoint(raton):
+                velocidad=1
+            elif medio_rect.collidepoint(raton):
+                velocidad=3
+            elif rapido_rect.collidepoint(raton):
+                velocidad=5
+
+            elif return_rect.collidepoint(raton):
+                exec(open('Juego.py').read())
+
+            break
+    if velocidad!=0:
+        break
+
+ventana.fill((255,255,255))
+pygame.display.flip()
+
+
+
 #Bucle del juego (Se encarga sobretodo de la interacción con el usuario)
 while True:
     for event in pygame.event.get():    #Cuando ocurre un evento...
