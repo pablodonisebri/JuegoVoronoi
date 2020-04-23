@@ -113,9 +113,6 @@ def pintar():
     else:
         Area2=Area(V[len(p)-1])+Area2
 
-
-
-
     Poner_marcador()
     pygame.display.update()
     return
@@ -126,6 +123,7 @@ def pintar():
 def teclas():
     global vec
     keys=pygame.key.get_pressed()
+    n=3#Velocidad de los puntos
     if keys[pygame.K_LEFT]:
         #vec[len(p)-1]=[-6,0]
         vec[len(p)-1]=[vec[len(p)-1][0]-1,vec[len(p)-1][1]]
@@ -133,7 +131,7 @@ def teclas():
         norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
         if norma==0:
             norma=1
-        vec[len(p)-1]=[  ((vec[len(p)-1][0])/norma ) ,((vec[len(p)-1][1])/norma ) ]
+        vec[len(p)-1]=[  n*((vec[len(p)-1][0])/norma ) ,n*((vec[len(p)-1][1])/norma ) ]
 
 
 
@@ -144,7 +142,7 @@ def teclas():
         norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
         if norma==0:
             norma=1
-        vec[len(p)-1]=[  ((vec[len(p)-1][0])/norma ) , ((vec[len(p)-1][1])/norma ) ]
+        vec[len(p)-1]=[  n*((vec[len(p)-1][0])/norma ) , n*((vec[len(p)-1][1])/norma ) ]
 
     if keys[pygame.K_UP]:
         #vec[len(p)-1]=[0,-6]
@@ -155,7 +153,7 @@ def teclas():
             norma=1
 
 
-        vec[len(p)-1]=[  ((vec[len(p)-1][0])/norma ) , ((vec[len(p)-1][1])/norma ) ]
+        vec[len(p)-1]=[  n*((vec[len(p)-1][0])/norma ) , n*((vec[len(p)-1][1])/norma ) ]
 
     if keys[pygame.K_DOWN]:
         #vec[len(p)-1]=[0,6]
@@ -164,7 +162,7 @@ def teclas():
         norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
         if norma==0:
             norma=1
-        vec[len(p)-1]=[  ((vec[len(p)-1][0])/norma ) , ((vec[len(p)-1][1])/norma ) ]
+        vec[len(p)-1]=[  n*((vec[len(p)-1][0])/norma ) , n*((vec[len(p)-1][1])/norma ) ]
 
 
 
@@ -195,6 +193,7 @@ def juego():
         #import Juego
         V=[]
         p=[]
+        vec=[]
         Area1=0
         Area2=0
         exec(open('Juego.py').read())
@@ -222,7 +221,7 @@ ventana = pygame.display.set_mode((700,800))
 marcador=pygame.Rect(0,700,700,100)
 #podemos ponerle titulo a nuestra ventana, entre otras cosas,
 #icono, que sea redimensionable...
-pygame.display.set_caption("TFG")
+pygame.display.set_caption("Juego de Voronoi")
 ventana.fill((255,255,255))
 
 
