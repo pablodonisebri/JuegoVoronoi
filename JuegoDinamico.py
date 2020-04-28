@@ -15,7 +15,7 @@ velocidad=[[random.uniform(-1,1),random.uniform(-1,1)]for i in range(20)]
 #normalizamos la velocidad
 velocidad=[[2*(velocidad[v][0]/(math.sqrt((velocidad[v][0])**2+(velocidad[v][1])**2))),2*(velocidad[v][1]/(math.sqrt((velocidad[v][0])**2+(velocidad[v][1])**2)))]for v in range(len(velocidad))]
 usuario=False
-parar=False
+PAUSA=True
 areaTotal=700*700
 Area1=0
 
@@ -42,9 +42,10 @@ def dist(A,B):
      return math.sqrt((A[0]-B[0])**2 + (A[1]-B[1])**2)
 
 def movimiento():
-    global velocidad,puntos,parar
+    global velocidad,puntos,PAUSA
+    if not PAUSA:
 
-    for p in range (len(puntos)):
+        for p in range (len(puntos)):
 
             #Si el punto llega al borde debe rebotar
              if puntos[p][0]>700:
@@ -60,14 +61,14 @@ def movimiento():
              puntos[p]=[puntos[p][0]+velocidad[p][0],puntos[p][1]+velocidad[p][1]]
 
     #Segundo ,tratamos colisiones
-    colision=[]
+        colision=[]
 
-    comb=combinations([i for i in range(len(puntos))],2)
-    for c in comb:
+        comb=combinations([i for i in range(len(puntos))],2)
+        for c in comb:
             if dist(puntos[c[1]],puntos[c[0]])<15:
                 colision.append([c[1],c[0]])
             continue
-    for [v1,v2] in colision:
+        for [v1,v2] in colision:
             #Tratar las colisiones
             #EL rebote se hace intercambiando los vectores velocidad de cada uno
             aux=velocidad[v1]
@@ -115,13 +116,17 @@ def poner_marcador():
 
 
 def teclas():
-    global puntos,velocidad,parar
+    global puntos,velocidad,PAUSA
 
     keys=pygame.key.get_pressed()
-    #n=3#Velocidad de los puntos
-
-
-
+    #Al pulsar barra de space se pausa el juego
+    if keys[pygame.K_SPACE] and not PAUSA:
+        PAUSA=True
+        return
+    if keys[pygame.K_SPACE] and  PAUSA:
+        PAUSA=False
+    if PAUSA:
+        return
     if keys[pygame.K_LEFT]:
         velocidad[len(puntos)-1]=[velocidad[len(puntos)-1][0]-2,velocidad[len(puntos)-1][1]]
         #Despues de mover el punto normalizamos la velocidad
@@ -154,10 +159,6 @@ def teclas():
             norma=1
         velocidad[len(puntos)-1]=[2*((velocidad[len(puntos)-1][0])/norma ) , 2*((velocidad[len(puntos)-1][1])/norma ) ]
 
-
-
-
-
     return
 
 
@@ -174,6 +175,9 @@ while True:
             if len(puntos)<21:
                 raton=pygame.mouse.get_pos()
                 usuario=True
+                #Cuando usuario añade punto los puntos aleatorios se comienzan a mover 
+                PAUSA=False
+
                 if raton in puntos:
                      puntos.append([raton[0]+1,raton[1]-1])
 
