@@ -136,8 +136,6 @@ def teclas():
             norma=1
         vec[len(p)-1]=[  velocidad*((vec[len(p)-1][0])/norma ) ,velocidad*((vec[len(p)-1][1])/norma ) ]
 
-
-
     if keys[pygame.K_RIGHT]:
         #vec[len(p)-1]=[6,0]
         vec[len(p)-1]=[vec[len(p)-1][0]+1,vec[len(p)-1][1]]
@@ -145,7 +143,7 @@ def teclas():
         norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
         if norma==0:
             norma=1
-        vec[len(p)-1]=[  velocidad*((vec[len(p)-1][0])/norma ) , velocidad*((vec[len(p)-1][1])/norma ) ]
+        vec[len(p)-1]=[velocidad*((vec[len(p)-1][0])/norma ) , velocidad*((vec[len(p)-1][1])/norma ) ]
 
     if keys[pygame.K_UP]:
         #vec[len(p)-1]=[0,-6]
@@ -165,7 +163,7 @@ def teclas():
         norma=math.sqrt((vec[len(p)-1][0])**2+(vec[len(p)-1][1])**2)
         if norma==0:
             norma=1
-        vec[len(p)-1]=[  velocidad*((vec[len(p)-1][0])/norma ) , velocidad*((vec[len(p)-1][1])/norma ) ]
+        vec[len(p)-1]=[velocidad*((vec[len(p)-1][0])/norma ) ,velocidad*((vec[len(p)-1][1])/norma ) ]
 
     return
 

@@ -13,7 +13,7 @@ pygame.init()
 ventana = pygame.display.set_mode((700,700))
 pygame.display.set_caption("Juego de Voronoi")
 ventana.fill((255,255,255))
-font = pygame.font.Font('freesansbold.ttf', 16)
+font = pygame.font.Font('freesansbold.ttf', 14)
 
 
 
@@ -32,9 +32,14 @@ ventana.blit(return_cadena, (return_rect.centerx-30, return_rect.centery-10))
 
 #Aquí se escribe el texto de la explicacion
 
-linea1=font.render('Explicación de las reglas del juego y demás', True, (0, 0, 0))
+linea1=font.render('Bienvenido al Juego de Voronoi', True, (0, 0, 0))
+linea2=font.render('Jugarán dos jugadores que  por turnos colocarán sus puntos clickando en el lugar deseado.', True, (0, 0, 0))
+linea3=font.render('El objetivo del juego es obtener la mayor proporción de área posible.', True, (0, 0, 0))
+
 
 ventana.blit(linea1, (10, 10))
+ventana.blit(linea2, (10, 40))
+ventana.blit(linea3, (10, 60))
 
 
 pygame.display.flip()

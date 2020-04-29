@@ -5,7 +5,7 @@ from auxiliar import Voronoi
 from itertools import combinations
 #from random import random
 from auxiliar import Area
-
+import threading
 
 pygame.init()
 
@@ -32,12 +32,19 @@ pygame.display.set_caption("Juego de Voronoi")
 ventana.fill((255,255,255))
 pygame.draw.rect(ventana, (250,250,250),marcador)
 font = pygame.font.Font('freesansbold.ttf', 18)
+return_cadena=font.render('return', True, (0, 0, 0))
+return_rect=pygame.Rect(580,740,100,50)
+pygame.draw.rect(ventana,(255, 255, 255),return_rect)
+pygame.draw.rect(ventana,(0, 0, 0),return_rect,2)
+ventana.blit(return_cadena, (return_rect.centerx-30, return_rect.centery-10))
 
 
 pygame.display.flip()
 
 
-
+def temporizador():
+    global PAUSA
+    PAUSA=True
 def dist(A,B):
      return math.sqrt((A[0]-B[0])**2 + (A[1]-B[1])**2)
 
@@ -110,6 +117,10 @@ def poner_marcador():
     pygame.draw.rect(ventana, (250,250,250),marcador)
     tArea1=font.render(str(int(Area1))+"%", True, (0, 0, 0))
     ventana.blit(tArea1, (15, 750))
+    pygame.draw.rect(ventana,(255, 255, 255),return_rect)
+    pygame.draw.rect(ventana,(0, 0, 0),return_rect,2)
+    ventana.blit(return_cadena, (return_rect.centerx-30, return_rect.centery-10))
+
 
     return
 
@@ -122,9 +133,10 @@ def teclas():
     #Al pulsar barra de space se pausa el juego
     if keys[pygame.K_SPACE] and not PAUSA:
         PAUSA=True
+        my_timer.cancel()
         return
-    if keys[pygame.K_SPACE] and  PAUSA:
-        PAUSA=False
+    # if keys[pygame.K_SPACE] and  PAUSA:
+    #     PAUSA=False
     if PAUSA:
         return
     if keys[pygame.K_LEFT]:
@@ -162,6 +174,8 @@ def teclas():
     return
 
 
+my_timer=threading.Timer(30.0, temporizador)
+
 while True:
     for event in pygame.event.get():
 
@@ -170,13 +184,19 @@ while True:
             sys.exit()                  #Se cierra el programa
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            raton=pygame.mouse.get_pos()
             #Obtenemos la posicion del raton que va hasta el punto (700,700)
+            if  return_rect.collidepoint(raton):
+
+                exec(open('Juego.py').read())
 
             if len(puntos)<21:
-                raton=pygame.mouse.get_pos()
+
                 usuario=True
-                #Cuando usuario añade punto los puntos aleatorios se comienzan a mover 
+                #Cuando usuario añade punto los puntos aleatorios se comienzan a mover
                 PAUSA=False
+                my_timer.start()
+
 
                 if raton in puntos:
                      puntos.append([raton[0]+1,raton[1]-1])

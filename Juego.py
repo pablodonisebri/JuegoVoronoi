@@ -13,25 +13,30 @@ ventana.fill((255,255,255))
 font = pygame.font.Font('freesansbold.ttf', 24)
 
 dinamico_cadena=font.render('Juego Dinámico', True, (0, 0, 0))
+dinamico2_cadena=font.render('Juego Dinámico 2', True, (0, 0, 0))
+
 normal_cadena=font.render('Juego Clásico', True, (0, 0, 0))
 explicacion_cadena=font.render('Explicación', True, (0, 0, 0))
 
 
 
-explicacion=pygame.Rect(100,100,500,100)
-dinamico=pygame.Rect(100,500,500,100)
-normal= pygame.Rect(100,300,500,100)
-
+explicacion=pygame.Rect(100,80,500,80)
+dinamico=pygame.Rect(100,400,500,80)
+normal= pygame.Rect(100,240,500,80)
+dinamico2= pygame.Rect(100,560,500,80)
 
 
 pygame.draw.rect(ventana, (72, 209, 204),dinamico)
 pygame.draw.rect(ventana, (72, 209, 204),normal)
 pygame.draw.rect(ventana, (72, 209, 204),explicacion)
+pygame.draw.rect(ventana, (72, 209, 204),dinamico2)
+
 
 
 ventana.blit(dinamico_cadena, (dinamico.centerx-100, dinamico.centery-10))
 ventana.blit(normal_cadena, (normal.centerx-100, normal.centery-10))
 ventana.blit(explicacion_cadena, (explicacion.centerx-90, explicacion.centery-10))
+ventana.blit(dinamico2_cadena, (dinamico2.centerx-100, dinamico2.centery-10))
 
 pygame.display.flip()
 
@@ -55,6 +60,8 @@ while True:
                  import Explicacion
                  exec(open('Explicacion.py').read())
 
-
+            elif dinamico2.collidepoint(raton):
+                 import JuegoDinamico
+                 exec(open('JuegoDinamico.py').read())
 
 
