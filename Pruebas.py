@@ -8,8 +8,9 @@ from itertools import combinations
 
 
 velocidad=0
-
-
+PAUSA=False
+timeout=False
+start_ticks=0
 
 def dist(A,B):
      return math.sqrt((A[0]-B[0])**2 + (A[1]-B[1])**2)
@@ -17,6 +18,7 @@ def dist(A,B):
 def movimiento():
     global p,vec
     #Primero movemos puntos
+    if timeout:return
     for j in range(len(p)):
         #Si el punto llega al borde debe rebotar
          if p[j][0]>700:
@@ -49,7 +51,8 @@ def movimiento():
 #Funcion para pintar en pantalla los diagramas despues de cada interaccion con el usuario
 def pintar():
     #En primer lugar se encarga de calcular la triangulacion y la division del plano en las regiones
-    global p,Area2,Area1
+    global p,Area2,Area1,PAUSA
+    if timeout: return
     if len(p)<3:
         Area1=0
         Area2=0
@@ -117,6 +120,8 @@ def pintar():
         Area2=Area(V[len(p)-1])+Area2
 
     Poner_marcador()
+    if len(p)==20:
+        temporizador()
     pygame.display.update()
     return
 
@@ -169,7 +174,8 @@ def teclas():
 
 
 def Poner_marcador():
-    global Area1,Area2
+    global Area1,Area2,PAUSA
+
     pygame.draw.rect(ventana, (250,250,250),marcador)
     Area1=(Area1/area)*100
     #print(Area1)
@@ -187,7 +193,8 @@ def Poner_marcador():
     return
 
 def juego():
-    global p,vec,l
+    global p,vec,l,PAUSA,start_ticks
+
     #Los primeros cuatro puntos hay que pedirlos y calcular Voronoi haciendo clipping
     raton = pygame.mouse.get_pos()
     if return_rect.collidepoint(raton):
@@ -198,6 +205,7 @@ def juego():
         Area1=0
         Area2=0
         exec(open('Juego.py').read())
+    if PAUSA:return
     if raton[1]>700:
         return
 
@@ -210,7 +218,43 @@ def juego():
         p.append(raton)
         vec.append([0,0])
         pintar()
+        #Cuando se pone el ultimo punto se le dan al jugador 10 segundos para mover el punto
+        if len(p)==20:
+            start_ticks=pygame.time.get_ticks()
+            pygame.time.set_timer(pygame.USEREVENT,100)
+            temporizador()
+
     return
+
+
+
+
+
+
+def temporizador():
+    global PAUSA,start_ticks,timeout
+
+
+    seconds=(pygame.time.get_ticks()-start_ticks)/1000 #calculate how many seconds
+
+    if seconds>10 and PAUSA:
+        timeout=True
+        return
+    if seconds>10 and not PAUSA:
+
+        PAUSA=True
+
+        pygame.time.set_timer(pygame.USEREVENT,0)
+        return
+
+    font = pygame.font.Font('freesansbold.ttf', 18)
+    seconds=10-int(seconds)
+    segundos=font.render('Segundos restantes: '+str(seconds), True, (0, 0, 0))
+    ventana.blit(segundos, (marcador.centerx-60, marcador.centery-30))
+
+           #print (int(seconds)) #print how many seconds
+
+
 
 
 
@@ -319,14 +363,21 @@ pygame.display.flip()
 
 #Bucle del juego (Se encarga sobretodo de la interacción con el usuario)
 while True:
-    for event in pygame.event.get():    #Cuando ocurre un evento...
+    for event in pygame.event.get():#Cuando ocurre un evento...
+
+        if event.type == pygame.USEREVENT:
+            temporizador()
+
         if event.type == pygame.QUIT:   #Si el evento es cerrar la ventana
             pygame.quit()               #Se cierra pygame
             sys.exit()                  #Se cierra el programa
 
+
         elif event.type == pygame.MOUSEBUTTONDOWN:
+                if not timeout: PAUSA=False
             #Obtenemos la posicion del raton que va hasta el punto (700,700)
                 juego()
+    if timeout:continue
     teclas()
     movimiento()
     pintar()

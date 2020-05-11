@@ -44,11 +44,16 @@ ventana.blit(linea3, (10, 60))
 
 pygame.display.flip()
 
+Hola=pygame.USEREVENT
+
+
 
 
 while True:
 
     for event in pygame.event.get():
+        if event.type==Hola:
+            print('Hola')
         if event.type == pygame.QUIT:   #Si el evento es cerrar la ventana
             pygame.quit()               #Se cierra pygame
             sys.exit()                  #Se cierra el programa

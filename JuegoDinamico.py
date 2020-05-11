@@ -18,6 +18,7 @@ usuario=False
 PAUSA=True
 areaTotal=700*700
 Area1=0
+start_ticks=0
 
 
 # #Inicializamos pygame
@@ -42,9 +43,28 @@ ventana.blit(return_cadena, (return_rect.centerx-30, return_rect.centery-10))
 pygame.display.flip()
 
 
+# def temporizador():
+#     global PAUSA
+#     PAUSA=True
+
 def temporizador():
-    global PAUSA
-    PAUSA=True
+    global PAUSA,start_ticks
+
+
+    seconds=(pygame.time.get_ticks()-start_ticks)/1000 #calculate how many seconds
+
+    if seconds>30 and PAUSA:
+
+        PAUSA=True
+        pygame.time.set_timer(pygame.USEREVENT,0)
+        return
+    if PAUSA:return
+    font = pygame.font.Font('freesansbold.ttf', 18)
+    seconds=30-int(seconds)
+    segundos=font.render('Segundos restantes: '+str(seconds), True, (0, 0, 0))
+    ventana.blit(segundos, (marcador.centerx-60, marcador.centery-10))
+           #print (int(seconds)) #print how many seconds
+
 def dist(A,B):
      return math.sqrt((A[0]-B[0])**2 + (A[1]-B[1])**2)
 
@@ -106,6 +126,7 @@ def pintar():
         pygame.draw.circle(ventana,(0,0,0),[int(puntos[len(puntos)-1][0]),int(puntos[len(puntos)-1][1])],4)
         Area1=Area(V[len(puntos)-1])
     poner_marcador()
+    #temporizador()
     pygame.display.update()
 
     return
@@ -133,7 +154,8 @@ def teclas():
     #Al pulsar barra de space se pausa el juego
     if keys[pygame.K_SPACE] and not PAUSA:
         PAUSA=True
-        my_timer.cancel()
+        pygame.time.set_timer(pygame.USEREVENT,0)
+        #my_timer.cancel()
         return
     # if keys[pygame.K_SPACE] and  PAUSA:
     #     PAUSA=False
@@ -174,10 +196,12 @@ def teclas():
     return
 
 
-my_timer=threading.Timer(30.0, temporizador)
+#my_timer=threading.Timer(30.0, temporizador)
 
 while True:
     for event in pygame.event.get():
+        if event.type == pygame.USEREVENT:
+           temporizador()
 
         if event.type == pygame.QUIT:   #Si el evento es cerrar la ventana
             pygame.quit()               #Se cierra pygame
@@ -195,7 +219,9 @@ while True:
                 usuario=True
                 #Cuando usuario añade punto los puntos aleatorios se comienzan a mover
                 PAUSA=False
-                my_timer.start()
+                start_ticks=pygame.time.get_ticks() #starter tick
+                pygame.time.set_timer(pygame.USEREVENT,100)
+                #my_timer.start()
 
 
                 if raton in puntos:
@@ -205,7 +231,6 @@ while True:
 
                 velocidad.append([0,0])
             continue
-
 
 
     teclas()
