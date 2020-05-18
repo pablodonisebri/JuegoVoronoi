@@ -54,12 +54,15 @@ def juego():
     raton = pygame.mouse.get_pos()
 
     if return_rect.collidepoint(raton):
-        #import Juego
         V=[]
-        p=[]
-        Area1=0
-        Area2=0
-        maximo=0
+        # #import Juego
+        # V=[]
+        # p=[]
+        # Area1=0
+        # Area2=0
+        # maximo=0
+        #Se pinta el rectangulo del marcador
+
         exec(open('Juego.py').read())
 
     if raton[1]>700:
@@ -78,7 +81,7 @@ def juego():
         else:
             p.append(raton)
 
-        print(len(p))
+
         for k in range(len(p)):
 
                 V.append(voronoiRegion(p,k))
