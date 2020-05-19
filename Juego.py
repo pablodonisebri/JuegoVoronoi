@@ -63,7 +63,7 @@ while True:
 
         #Si el usaurio hace click con el boton
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Se obtiene
+            # Se obtiene la posicion del raton deseada y se lanza ese proceso en función de la seleccion
             raton = pygame.mouse.get_pos()
             if normal.collidepoint(raton):
                 #import Voronoi.py
