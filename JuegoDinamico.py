@@ -21,7 +21,7 @@ velocidad=[[2*(velocidad[v][0]/(math.sqrt((velocidad[v][0])**2+(velocidad[v][1])
 #Parametro que indica si el usuario ha introducido ya su punto
 usuario=False
 #Parametro que indica el estado del juego
-PAUSA=True
+STOP=True
 
 #Area total del tablero
 areaTotal=700*700
@@ -59,17 +59,17 @@ pygame.display.flip()
 
 
 #Funcion que controla el temporizador
-def temporizador():
-    global PAUSA,start_ticks,font
+def temporizador2():
+    global STOP,start_ticks,font
 
     #Calcula cuantos segundos han pasado desde que comenzo el temporizador
     seconds=(pygame.time.get_ticks()-start_ticks)/1000 #calculate how many seconds
 
-    #Si el juego esta esta ya PAUSAdo no debe haber temporizador
-    if PAUSA:return
+    #Si el juego esta esta ya STOPdo no debe haber temporizador
+    if STOP:return
     #Si han pasado mas de 30 segundos y el juego sigue en movimiento debe parar el juego
-    if seconds>30 and not PAUSA:
-        PAUSA=True
+    if seconds>30 and not STOP:
+        STOP=True
         return
 
     #Cuenta inversa del temporizador
@@ -86,9 +86,9 @@ def dist(A,B):
 
 #Funcion que se encarga de mover los puntos en cada unidad temporal
 def movimiento():
-    global velocidad, puntos, PAUSA
-    #Si el juego no esta PAUSAdo se deben mover los puntos
-    if not PAUSA:
+    global velocidad, puntos, STOP
+    #Si el juego no esta STOPdo se deben mover los puntos
+    if not STOP:
         #Hay que mover cada punto
         for p in range (len(puntos)):
             #Si el punto llega al borde debe rebotar, se le cambia de signo la coordenada del vector en funcion de
@@ -125,9 +125,9 @@ def movimiento():
 
 #Funcion que se encarga de mostrar por pantalla en cada unidad temporal
 def pintar2():
-    global puntos, Area1, PAUSA, ventana2,usuario
-    #Si el juego esta en PAUSA no debe cambiar nada en la pantalla
-    #if PAUSA and usuario:return
+    global puntos, Area1, STOP, ventana2,usuario
+    #Si el juego esta en STOP no debe cambiar nada en la pantalla
+    #if STOP and usuario:return
 
     #Se calcula la triangulacion de Delaunay y a partir de ella las regiones de Voronoi
     D=Delaunay(puntos)
@@ -156,7 +156,7 @@ def pintar2():
         Area1=Area(V[len(puntos)-1])
     #Se llama a las funciones auxiliares de poner marcador2 y temporizador
     poner_marcador()
-    temporizador()
+    temporizador2()
     #Se actualiza lo que aparece por pantalla
     pygame.display.update()
     return
@@ -182,18 +182,18 @@ def poner_marcador():
 
 #Funcion que se encarga de la interaccion con las teclas que pulsa el jugador
 def teclas():
-    global puntos,velocidad,PAUSA
+    global puntos,velocidad,STOP
 
     #La tecla que ha pulsado el usuario
     keys=pygame.key.get_pressed()
-    #Al pulsar barra de space se PAUSA el juego
-    if keys[pygame.K_SPACE] and not PAUSA:
-        PAUSA=True
+    #Al pulsar barra de space se STOP el juego
+    if keys[pygame.K_SPACE] and not STOP:
+        STOP=True
         return
-    #En caso de que se quiera PAUSAr de manera no definitiva
-    # if keys[pygame.K_SPACE] and  PAUSA:
-    #     PAUSA=False
-    if PAUSA:
+    #En caso de que se quiera STOPr de manera no definitiva
+    # if keys[pygame.K_SPACE] and  STOP:
+    #     STOP=False
+    if STOP:
         return
     #Pulsar alguna de las flechas modifica el vector velocidad del punto que controla el usuario, debe volver a ser normalizado
 
@@ -238,7 +238,7 @@ while True:
                 #Variable que indica si el usuario ha colocado su punto para poder pintar las regiones
                 usuario=True
                 #Cuando usuario añade punto los puntos aleatorios se comienzan a mover
-                PAUSA=False
+                STOP=False
                 #Obtenemos el tiempo actual, momento en el que comienza el temporizador
                 start_ticks=pygame.time.get_ticks()
 

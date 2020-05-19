@@ -10,8 +10,6 @@ from auxiliar import Area
 
 
 
-
-
 #Inicializamos pygame
 pygame.init()
 
@@ -63,7 +61,7 @@ while True:
 
         #Si el usaurio hace click con el boton
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Se obtiene la posicion del raton deseada y se lanza ese proceso en función de la seleccion
+            # Se obtiene
             raton = pygame.mouse.get_pos()
             if normal.collidepoint(raton):
                 #import Voronoi.py
@@ -73,12 +71,13 @@ while True:
                 exec(open('Pruebas.py').read())
 
             elif explicacion.collidepoint(raton):
+                 #import Explicacion
 
-                 import Explicacion
                  exec(open('Explicacion.py').read())
 
             if dinamico2.collidepoint(raton):
                  import JuegoDinamico
                  exec(open('JuegoDinamico.py').read())
+
 
 
