@@ -1,8 +1,21 @@
 # TFG
-Trabajo de fin de grado
+Hola y bienvenido a mi TFG, este consiste en la implementación del Juego de Voronoi en diferentes versiones.
+
+En este directorio encontrarás todas las clases que componen el proyecto. Se listan todas a continuación con una explicación de cada una :
 
 
-En el fichero auxiliar encontramos todas las funciones geometricas necesarias para desarrollar el juego.
-En el fichero Voronoi encontramos todas las funciones que implementan el juego.
+--> auxiliar.py : Contiene todas las funciones geometricas de apoyo al trabajo
 
-Solo es necesario tener las dos en la misma carpeta y ejecutar el archivo Voronoi para jugar.
+-->Juego.py: Clase del menú principal de la aplicación del juego, es la que se debe ejecutar
+
+-->Voronoi.py: Clase del juego clasico de Voronoi
+
+-->Pruebas.py: Clase del juego dinamico version 1 (para dos jugadores)
+
+-->JuegoDinamico.py: Clase del juego dinámico versión 2 (para un solo jugador)
+
+-->Explicacion.py: Clase que muestra la pantalla con la explicacion del juego para los usuarios
+
+
+
+Espero que disfrutes del juego!!
