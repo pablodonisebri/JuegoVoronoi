@@ -46,8 +46,8 @@ vec=[]
 Area1=0
 #Area del segundo jugador
 Area2=0
-#Area total del tablero que se necesita para calcular los porcentajes
-area=700*700
+#Area total del tablero que se necesita para calcular los porcentajes, se calcula como la suma de Area1 mas Area2
+area=0
 #Parametro para que no haya problema de superposicion de puntos, el que determinara el pequeño desplazamiento
 l=1
 
@@ -133,7 +133,7 @@ def movimiento():
 
 #Funcion para pintar en pantalla los diagramas en cada unidad temporal
 def pintar():
-    global p,Area2,Area1,PAUSA
+    global p,Area2,Area1,PAUSA,area
 
 #En primer lugar se encarga de calcular la triangulacion y la division del plano en las regiones
     #Si hay menos de tres puntos no se puede hacer uso de la triangulacion y se debe hacer por interseccion de semiplanos
@@ -166,6 +166,7 @@ def pintar():
                     #Calcular area
                     Area2=Area(V[k])+Area2
         #Se pone el marcador
+        area=Area1+Area2
         Poner_marcador()
         #Se actualiza pantalla
         pygame.display.update()
@@ -218,8 +219,10 @@ def pintar():
             #Se pinta el circulo
             pygame.draw.circle(ventana,(143,143,143),[int(p[len(p)-1][0]),int(p[len(p)-1][1])],9)
             pygame.draw.circle(ventana,(0,0,0),[int(p[len(p)-1][0]),int(p[len(p)-1][1])],4)
+    area=Area1+Area2
     #Se pone el marcador
     Poner_marcador()
+
     #Cuando se pone el ultimo punto debe salir el temporizador
     if len(p)==20:
         temporizador()
@@ -263,19 +266,20 @@ def teclas():
 
 #Funcion encargada de mostrar el marcador en la pantalla
 def Poner_marcador():
-    global Area1,Area2
+    global Area1,Area2,area
 
     #Se pinta el rectangulo del marcador
     pygame.draw.rect(ventana, (250,250,250),marcador)
     #Se calculan los areas de los jugadores como porcentajes
-    Area1=(Area1/area)*100
-    Area2=(Area2/area)*100
-    #Texto de las areas
-    tArea1=font.render(str(int(Area1))+"%", True, (0, 0, 250))
-    tArea2=font.render(str(int(Area2))+"%", True, (250, 0, 0))
-    #Se muestran en la pantalla las areas
-    ventana.blit(tArea1, (15, 750))
-    ventana.blit(tArea2, (350, 750))
+    if len(p)>0:
+        Area1=(Area1/area)*100
+        Area2=(Area2/area)*100
+        #Texto de las areas
+        tArea1=font.render(str(int(Area1))+"%", True, (0, 0, 250))
+        tArea2=font.render(str(int(Area2))+"%", True, (250, 0, 0))
+        #Se muestran en la pantalla las areas
+        ventana.blit(tArea1, (15, 750))
+        ventana.blit(tArea2, (350, 750))
     #Boton return
     ventana.blit(return_cadena, (return_rect.centerx-30, return_rect.centery-10))
     #Numero de puntos que hay en juego ahora mismo en el tablero
@@ -288,11 +292,13 @@ def Poner_marcador():
 
 #Funcion encargada del posicionamiento de los puntos en el tablero por parte de los jugadores
 def juego():
-    global p,vec,l,PAUSA
+    global p,vec,l,PAUSA,segundos
     #Se obtiene la posicion en la que ha pulsado el raton
     raton = pygame.mouse.get_pos()
     #Si pulsa return debe volver al menu
     if return_rect.collidepoint(raton):
+        segundos=0
+
         exec(open('Juego.py').read())
     # Si el juego esta pausado no debe poder hacer nada mas que pulsar return
     if PAUSA:return
@@ -323,7 +329,6 @@ def juego():
 #Funcion que hace tick al reloj
 def tick():
     global segundos
-
     segundos=segundos+1
 
 #Funcion encargada del temporizador cuando se ha colocado el ultimo punto sobre el tablero
@@ -362,9 +367,9 @@ while True:
             if lento_rect.collidepoint(raton):
                 velocidad=1
             elif medio_rect.collidepoint(raton):
-                velocidad=3
+                velocidad=2
             elif rapido_rect.collidepoint(raton):
-                velocidad=5
+                velocidad=3
             #Si el usuario selecciona return se vuelve al menu de seleccion
             elif return_rect.collidepoint(raton):
                 exec(open('Juego.py').read())

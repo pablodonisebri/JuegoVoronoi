@@ -23,9 +23,10 @@ usuario=False
 #Parametro que indica el estado del juego
 STOP=True
 
-#Area total del tablero
+#Area total del tablero sera calculada como la suma de Area1 mas Area2
 areaTotal=700*700
 Area1=0
+
 start_ticks=0
 
 ###Incializacion de la pantalla del juego###
@@ -125,14 +126,13 @@ def movimiento():
 
 #Funcion que se encarga de mostrar por pantalla en cada unidad temporal
 def pintar2():
-    global puntos, Area1, STOP, ventana2,usuario
+    global puntos, Area1, STOP, ventana2,usuario,areaTotal
     #Si el juego esta en STOP no debe cambiar nada en la pantalla
     #if STOP and usuario:return
 
     #Se calcula la triangulacion de Delaunay y a partir de ella las regiones de Voronoi
     D=Delaunay(puntos)
     V=Voronoi(D)
-
     #Si el usuario aun no ha colocado su punto todas las regiones son grises
     if not usuario:
         for p in range(len(puntos)):
@@ -140,6 +140,7 @@ def pintar2():
             pygame.draw.polygon(ventana2,(0,0,0),V[p],2)
             pygame.draw.circle(ventana2,(180,180,180),[int(puntos[p][0]),int(puntos[p][1])],9)
             pygame.draw.circle(ventana2,(0,0,0),[int(puntos[p][0]),int(puntos[p][1])],4)
+
     #Si el usuario ya ha colocado, la ultima region es la region que ha colocado el usuario y debe ser roja, las demas grises
     else:
         for p in range(len(puntos)-1):
@@ -147,6 +148,7 @@ def pintar2():
             pygame.draw.polygon(ventana2,(0,0,0),V[p],2)
             pygame.draw.circle(ventana2,(180,180,180),[int(puntos[p][0]),int(puntos[p][1])],9)
             pygame.draw.circle(ventana2,(0,0,0),[int(puntos[p][0]),int(puntos[p][1])],4)
+
         #La region del usuario:
         pygame.draw.polygon(ventana2,(180,0,0),V[len(puntos)-1])
         pygame.draw.polygon(ventana2,(0,0,0),V[len(puntos)-1],2)
@@ -155,6 +157,8 @@ def pintar2():
         #Se calcula la proporcion del Area que supone la region del usuario
         Area1=Area(V[len(puntos)-1])
     #Se llama a las funciones auxiliares de poner marcador2 y temporizador
+
+
     poner_marcador()
     temporizador2()
     #Se actualiza lo que aparece por pantalla
@@ -166,11 +170,11 @@ def pintar2():
 def poner_marcador():
     global areaTotal,Area1,ventana2,return_cadena,return_rect
     #Se calcula el porcentaje del area
-    Area1=(Area1/areaTotal)*100
+    #Area1=(Area1/areaTotal)*100
     #Se pinta el rectangulo del marcador2
     pygame.draw.rect(ventana2, (250,250,250),marcador2)
     #Se muestra el area por pantalla
-    tArea1=font.render(str(int(Area1))+"%", True, (0, 0, 0))
+    tArea1=font.render(str(int( (Area1/areaTotal) *100))+"%", True, (0, 0, 0))
     ventana2.blit(tArea1, (15, 750))
     #Boton de return
     pygame.draw.rect(ventana2,(255, 255, 255),return_rect)

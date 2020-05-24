@@ -193,11 +193,11 @@ def Voronoi(D):
                break
         #Si hemos dado una vuelta completa
         if s!=-1:
-             #Hacemos clipping con la pantalla por si
-             #Region=clipping(Region,[[0,0],[700,0]])
-             #Region=clipping(Region,[[0,700],[0,0]])
-             #Region=clipping(Region,[[700,700],[0,700]])
-             #Region=clipping(Region,[[700,0],[700,700]])
+            #Hacemos clipping con la pantalla por si
+             Region=clipping(Region,[[0,0],[700,0]])
+             Region=clipping(Region,[[0,700],[0,0]])
+             Region=clipping(Region,[[700,700],[0,700]])
+             Region=clipping(Region,[[700,0],[700,700]])
             #Añadimos la region al Diagrama
              V.append(Region)
              continue
